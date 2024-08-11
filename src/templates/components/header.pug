@@ -1,0 +1,27 @@
+header.header 
+    .header__inner
+        img(src="img/main_logo.svg", class="header__logo" alt="")
+        ul.header__list 
+            li.header__item
+                a(href="#about" class="header__link nav__link text-color") Про нас
+            li.header__item
+                a(href="#slider" class="header__link nav__link text-color") Мерч
+            li.header__item
+                a(href="#form" class="header__link nav__link text-color") Контакти
+        .burger.js-show-menu
+            span.burger__line
+            span.burger__line
+            span.burger__line
+        button.promo__btn.btn.white-color.text-shadow Онлайн допомога
+.header__nav.nav.js-menu 
+    img(src="img/main_logo.svg", class="header__logo nav__logo" alt="")
+    ul.nav__list
+        li.nav__item
+            a.nav__link.text-color(href="#warning") Про нас
+        li.nav__item
+            a.nav__link.text-color(href="#about") Мерч
+        li.nav__item
+            a.nav__link.text-color(href="#review") Контакти
+    .nav__btns
+        button.promo__btn.btn.nav__btn.text-shadow Онлайн допомога
+        button.nav__close.js-close-menu.text-shadow Закрити меню
