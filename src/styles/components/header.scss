@@ -35,7 +35,7 @@
 }
 
 .header__list,
-.promo__btn {
+.header__btn {
     display: none;
 }
 
@@ -177,9 +177,11 @@
         display: flex;
         align-items: center;
         gap: 41px;
+        font-size: 20px;
+        font-family: $text-font;
     }
 
-    .promo__btn {
+    .header__btn {
         display: block;
     }
 }
@@ -187,9 +189,20 @@
 @include rm(1250) {    
     .header__inner {
         padding: 35px 25px;
+        max-width: 1250px;
+        justify-content: flex-start;
     }
 
     .header__logo {
         width: 178px;
+        margin-right: 271px;
+    }
+
+    .header__list {
+        gap: 44px;
+    }
+
+    .header__btn {
+        margin-left: auto;
     }
 }
