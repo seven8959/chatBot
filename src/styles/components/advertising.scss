@@ -2,7 +2,7 @@
     background: #E0E1D9;
 }
 
-.advertising__inner {
+.list {
     background: rgba($color: $white-color, $alpha: .9);
     border-radius: 30px;
     padding: 25px 23px;
@@ -13,25 +13,27 @@
     align-items: center;
 }
 
-.advertising__img {
+.list__img {
     grid-area: 1 / 1 / 2 / 2;
     width: 80px;
     justify-self: end;
 }
 
-.advertising__header {
+.list__header {
     grid-area: 1 / 2 / 2 / 3;
     font-size: 26px;
     font-family: $text-font;
     line-height: 1.2;
     justify-self: start;
+    color: $text-color;
 }
 
-.advertising__text {
+.list__text {
     grid-area: 2 / 1 / 3 / 3;
     font-size: 19px;
     line-height: 1.3;
     font-family: $text-font;
+    color: $text-color;
 }
 
 @include rm(375) {
@@ -47,69 +49,69 @@
         padding-bottom: 35px;
     }
     
-    .advertising__inner {
+    .list {
         padding: 25px;
         grid-template-columns: minmax(80px, 150px);
     }
     
-    .advertising__img {
+    .list__img {
         width: 80px;
     }
 }
 
 @include rm(640) {
-    .advertising__inner {
+    .list {
         padding: 30px;
         grid-template-columns: inherit;
     }
     
-    .advertising__img {
+    .list__img {
         width: 100px;
     }
 
-    .advertising__header {
+    .list__header {
         font-size: 27px;
     }
 
-    .advertising__text {
+    .list__text {
         font-size: 20px;
     }
 }
 
 @include rm(768) {   
-    .advertising__img {
+    .list__img {
         width: 120px;
     }
 
-    .advertising__header {
+    .list__header {
         font-size: 28px;
     }
 
-    .advertising__text {
+    .list__text {
         font-size: 21px;
     }
 }
 
 @include rm(1024) {   
-    .advertising__inner {
+    .list {
         grid-template-columns: auto auto;
         grid-template-rows: auto auto;
         align-items: center;
         gap: 30px;
     }
     
-    .advertising__img {
+    .list__img {
         width: 180px;
         grid-area: 1 / 1 / 3 / 2;
         justify-self: inherit;
     }
 
-    .advertising__header {
+    .list__header {
         font-size: 29px;
         grid-area: 1 / 2 / 2 / 3;
     }
 
-    .advertising__text {
+    .list__text {
         font-size: 22px;
         grid-area: 2 / 2 / 3 / 3;
     }
@@ -121,20 +123,20 @@
         padding-bottom: 100px;
     }
     
-    .advertising__inner {
+    .list {
         gap: 0 40px;
         padding: 77px 45px;
     }
     
-    .advertising__img {
+    .list__img {
         width: 200px;
     }
 
-    .advertising__header {
+    .list__header {
         font-size: 30px;
     }
 
-    .advertising__text {
+    .list__text {
         font-size: 24px;
     }
 }

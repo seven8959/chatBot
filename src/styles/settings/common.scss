@@ -108,6 +108,7 @@ button {
   color: $white-color;
   padding: 18px 21px;
   transition: .3s;
+  cursor: pointer;
 
   &:hover {
     box-shadow: 0 2px 2px rgba($color: #000000, $alpha: .25);
