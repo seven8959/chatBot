@@ -110,6 +110,10 @@
 }
 
 @include rm(1024) {    
+    .about__wrapper {
+        padding-bottom: 50px;
+    }
+    
     .about__inner {
         padding: 0 30px;
         margin-bottom: 70px;
@@ -136,7 +140,7 @@
 @include rm(1250) {    
     .about__wrapper {
         padding-top: 100px;
-        padding-bottom: 50px;
+        padding-bottom: 55px;
     }
     
     .about__inner {

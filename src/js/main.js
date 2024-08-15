@@ -1,8 +1,9 @@
 import scrollSmooth from './helpers/smooth-scroll.js';
 import menu from './modules/header.js';
+import slider from './modules/slider.js';
 
 function main() {
- 
+  slider();
 }
 
 scrollSmooth();

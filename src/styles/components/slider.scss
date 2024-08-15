@@ -1,0 +1,184 @@
+.slider__wrapper {
+    position: relative;
+}
+
+.slider__item {
+    position: relative;
+
+    &:nth-child(even) {
+
+        .slider__caption {
+            background: rgba($color: $white-color, $alpha: .8);
+            color: $text-color;
+        }
+    }
+}
+
+.slider__img {
+    object-fit: cover;
+    height: 395px;
+}
+
+.slider__caption {
+    position: absolute;
+    text-align: center;
+    padding: 27px 15px 28px;
+    background: rgba($color: #D9D9D9, $alpha: .5);
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: $white-color;
+    font-family: $main-font;
+    font-size: 24px;
+}
+
+.slider__text {
+    display: none;
+}
+
+.arrow {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    cursor: pointer;
+    
+    svg {
+        width: 60px;
+        
+        path {
+            transition: fill .3s;
+        }
+
+        &:hover path{
+            fill: #0B61A8;
+        }
+    }
+}
+
+.arrow__right {
+    left: auto;
+    right: 15px;
+}
+
+.slick-disabled {
+    svg {
+        
+        path {
+            fill: rgba($color: $white-color, $alpha: .5);
+            transition: fill .3s;
+        }
+
+        &:hover path{
+            fill: rgba($color: $white-color, $alpha: .5);
+        }
+    }
+}
+
+@include rm(375) {       
+    .slider__img {
+        height: 455px;
+    }
+}
+
+@include rm(480) {       
+    .slider__img {
+        height: 540px;
+    }
+
+    .slider__caption {
+        font-size: 30px;
+    }
+}
+
+@include rm(640) {       
+    .slider__img {
+        height: 600px;
+    }
+
+    .slider__caption {
+        font-size: 40px;
+    }
+
+    .slider__header {
+        margin-bottom: 10px;
+    }
+
+    .slider__text {
+        display: block;
+        font-size: 18px;
+        line-height: 1.2;
+    }
+}
+
+@include rm(768) {       
+    .slider__caption {
+        font-size: 50px;
+    }
+
+    .slider__text {
+        font-size: 21px;
+    }
+}
+
+@include rm(1024) {       
+    .slider__img {
+        height: inherit;
+    }
+    
+    .slider__caption {
+        font-size: 60px;
+    }
+
+    .slider__text {
+        font-size: 23px;
+        line-height: 1;
+    }
+}
+
+@include rm(1250) {           
+    .slider__caption {
+        font-size: 80px;
+        max-width: 1200px;
+        width: 100%;
+        left: calc(50% - 600px);
+        padding: 0 0 44px;
+        height: 153px;
+        text-align: left;
+    }
+
+    .slider__header {
+        margin-bottom: 35px;
+        margin-top: -34px;
+        margin: -35px 0 38px 49px;
+    }
+
+    .slider__text {
+        font-size: 24px;
+        margin-left: 100px;
+    }
+
+    .arrow {
+
+        svg {
+            width: 107px;
+        }
+    }
+}
+
+@include rm(1920) {           
+    .slider__wrapper {
+        width: 1920px;
+        margin: 0 auto;
+    }
+    
+    .arrow {
+        top: auto;
+        bottom: 53px;
+        left: 176px;
+    }
+
+    .arrow__right {
+        right: 176px;
+        left: auto;
+    }
+}

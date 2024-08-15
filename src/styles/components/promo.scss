@@ -42,6 +42,7 @@
     bottom: 40px;
     transition: .3s transform;
     cursor: pointer;
+    z-index: 1;
 
     &:hover {
         transform: scale(.9);
