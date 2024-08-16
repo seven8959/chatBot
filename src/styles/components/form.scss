@@ -1,0 +1,165 @@
+.form__map {
+    display: none;
+}
+
+.form__wrapper {
+    padding: 35px 15px;
+    background: url(../img/form_bg.jpg) no-repeat center / cover;
+}
+
+.form__bg {
+    display: none;
+}
+
+.form__inner {
+    background: #0D60A8;
+    text-align: center;
+    padding: 45px 19px;
+    font-family: $form-font;
+    max-width: 345px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.form__header {
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+.form__subheader {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.form__label {
+    position: relative;
+    margin-bottom: 16px;
+    display: block;
+
+    &:before {
+        position: absolute;
+        content: "";
+        background: url(../img/user.png) no-repeat center / contain;
+        width: 24px;
+        height: 24px;
+        left: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.form__label--mail {
+
+    &:before {
+        background: url(../img/mail.png) no-repeat center / contain;
+    }
+}
+
+.form__input {
+    width: 100%;
+    display: block;
+    color: #c2c2c2;
+    font-size: 14px;
+    font-family: $form-font;
+    border-radius: 50px;
+    padding: 18px 26px 18px 58px;
+    border: 1px solid #eee;
+    transition: .3s;
+
+    &::placeholder {
+        color: #c2c2c2;  
+        transition: .3s;
+    }
+
+    &:hover,
+    &:focus {
+        box-shadow: inset 0 0 10px rgba($color: #0D60A8, $alpha: .7);
+        border: 1px solid rgba($color: #0D60A8, $alpha: .7);
+    }
+}
+
+.form__input:focus::placeholder {
+    text-indent: -500px;
+}
+
+.form__btn {
+    font-family: $form-font;
+    background: #0575E6;
+    font-size: 14px;
+    width: 100%;
+    border-radius: 50px;
+
+    &:hover {
+        background: #034c95;
+    }
+}
+
+@include rm(375) {
+    .form__wrapper {
+        padding: 50px 15px;
+    }
+}
+
+@include rm(1024) {
+    .form {
+        position: relative;
+    }
+    
+    .form__wrapper {
+        padding: 70px 25px;
+        background: none;
+    }
+
+    .form__map {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .form__container {
+        position: relative;
+        display: flex;
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        justify-content: center;
+        transition: opacity .3s;
+    }
+
+    .form__bg {
+        display: block;
+        width: 500px;
+    }
+
+    .form__inner {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+    }
+}
+
+@include rm(1250) {    
+    .form__wrapper {
+        padding: 100px 25px;
+    }
+
+    .form__bg {
+        width: 721px;
+    }
+
+    .form__inner {
+        max-width: 479px;
+        padding: 50px 89px;
+    }
+}
