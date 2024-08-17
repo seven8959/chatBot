@@ -167,7 +167,8 @@
 
 @include rm(1920) {           
     .slider__wrapper {
-        width: 1920px;
+        max-width: 1920px;
+        width: 100%;
         margin: 0 auto;
     }
     
