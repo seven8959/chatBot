@@ -1,0 +1,55 @@
+.widget 
+    .widget__top.white-color 
+        p.widget__date 
+            span.day.date-0(data-format="dayFull")
+            | , 
+            span.time-today
+            |  |  
+            span.date-0 
+        .widget__minimize-btn 
+    .widget__head.shadow
+        .widget__AI.AI 
+            img(src="img/ai.png", class="AI__img" alt="")
+            .AI__text 
+                span.AI__top Chatbot AI 
+                span.AI__botton AI operator
+        .widget__settings 
+            img(src="img/settings.png", class="widget__settings-img" alt="")
+    .widget__chat.chat 
+        .chat__AI 
+            img(src="img/ai.png", class="AI__img" alt="")
+            .chat__AI-msg 
+                p.chat__AI-text Добридень! Ми раді ваc
+                    | вітати у нашому медичному центрі"Yablu kovich". Ми з 
+                    | радістю зробимо вам діагностику на смак та колір.
+                    | Ми проведемо будь-які тести: на воді, на супі, на зірках, 
+                    | на картах таро та по лініям на руці.
+                span.time.time-current
+        //- .chat__operator-connect 
+        //-     img(src="img/operator_full.png", class="chat__operator-full", alt="")
+        //-     p.chat__operator-header Оператор Легітимний приєднався чат
+        //-     p.chat__operator-date 
+        //-         span.date-0(data-format="dd monthFull yyyy")
+        //-         |  | 
+        //-         span.time.time-current
+        .chat__operator-wrapper
+            //- .chat__operator 
+            //-     img(src="img/operator.png", class="operator__img", alt="")
+            //-     .chat__operator-msg 
+            //-         p.chat__operator-text Доброго дня, Легітимний оператор на 
+            //-             | зв”язку. Вкажіть ваше ім”я
+            //-         span.time.time-current
+            //- .chat__operator-btns 
+            //-     button.chat__operator-btn(data-gender="man") Чоловіча
+            //-     button.chat__operator-btn(data-gender="woman") Жіноча
+            //-     button.chat__operator-btn(data-gender="none") Небінарна
+        //- .chat__user 
+        //-     img(src="img/user.png", class="user__img", alt="")
+        //-     .chat__user-msg 
+        //-         p.chat__user-text Добридень! Ми раді ваc
+        //-         span.time.time-current
+    .widget__user-msg 
+        input(type="text" class="user__message", placeholder="Напишіть тут")
+        label.widget__file 
+            input(type="file" class="input__file")
+        button.widget__msg-send
