@@ -1,13 +1,15 @@
 import scrollSmooth from './helpers/smooth-scroll.js';
 import menu from './modules/header.js';
 import slider from './modules/slider.js';
+import widget from './modules/widget.js';
 
 function main() {
   slider();
 }
 
 scrollSmooth();
-menu()
+menu();
+widget();
 
 if (document.documentElement.clientWidth < 480) {
   window.addEventListener('scroll',
