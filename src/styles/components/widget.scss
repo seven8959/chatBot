@@ -23,10 +23,41 @@
     position: absolute;
     cursor: pointer;
     width: 14px;
-    height: 4px;
-    background: $white-color;
-    top: calc(50% - 2px);
+    padding: 5px 0;
+    top: calc(50% - 7px);
     right: 15px;
+}
+
+.minimize__line {
+    background: $white-color;
+    width: 14px;
+    height: 4px;
+    display: block;
+}
+
+.widget.minimize {
+    height: 25px;
+    overflow: hidden;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+}
+
+.minimize {
+
+    .widget__minimize-btn {
+        border: 2px solid $white-color;
+        padding: 3px 0;
+    }
+
+    .minimize__line {
+        background: transparent;
+    }
+
+    .widget__top {
+        cursor: default;
+    }
 }
 
 .widget__head {
