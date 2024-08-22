@@ -1,12 +1,50 @@
 export default () => {
+    // show widget
+    const showWidgetBtns = document.querySelectorAll('.widget-show');
+    const closeWidgetMenu = document.querySelector('.widget__menu-close');
+
+    showWidgetBtns.forEach(el => {
+        el.addEventListener('click', function() {
+            draggable.style.display = `block`;
+        })
+    })
+
+
+    // toggle settings
+    const settingsBtn = document.querySelector('.widget__settings');
+    const widgetMenu = document.querySelector('.widget__menu');
+
+    settingsBtn.addEventListener('click', function() {
+        widgetMenu.classList.add('active');
+    })
+    closeWidgetMenu.addEventListener('click', function() {
+        widgetMenu.classList.remove('active');
+    })
+
+
+    // settings widget
+    function useSettingsWidget() {
+        widgetMenu.addEventListener('click', function(e) {
+            let target = e.target;
+
+            if (target.classList.contains('dark-mode')) {
+                draggable.classList.toggle('dark__mode')
+            } 
+
+            else if (target.classList.contains('large-font')) {
+                draggable.classList.toggle('large__font')
+            }
+        })
+    }
+    useSettingsWidget();
+
+    // moving a widget
     const draggable = document.querySelector('.widget');
     const movingArea = document.querySelector('.widget__top');
-    const minimizeBtn = document.querySelector('.widget__minimize-btn');
 
     let isDraggable = false;
     let offsetX, offsetY;
-
-    // moving a widget
+    
     function centerWindow() {
         const rect = draggable.getBoundingClientRect();
         draggable.style.left = `50%`;
@@ -56,9 +94,11 @@ export default () => {
 
 
     // minimize a widget
+    const minimizeBtn = document.querySelector('.widget__minimize-btn');
+
     minimizeBtn.addEventListener('click', function () {
         if (draggable.classList.toggle('minimize')) {
-            draggable.style.left = '0%';
+            draggable.style.left = '0';
             draggable.style.top = 'auto';
             draggable.style.bottom = '0';
             draggable.style.transform = 'none';

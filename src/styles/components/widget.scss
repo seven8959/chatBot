@@ -8,6 +8,7 @@
     box-shadow: 0 0 4px rgba($color: #000000, $alpha: .25);
     font-family: $main-font;
     text-shadow: none;
+    display: none;
 }
 
 .widget__top {
@@ -66,6 +67,7 @@
     justify-content: space-between;
     align-items: center;
     background: #F8F5F5;
+    position: relative;
 }
 
 .widget__AI {
@@ -96,6 +98,47 @@
 
 .widget__settings {
     cursor: pointer;
+}
+
+.widget__menu {
+    position: absolute;
+    background: #f8f5f5;
+    width: 100%;
+    left: 0;
+    top: 0;
+    transition: .3s;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    height: 0;
+    overflow: hidden;
+}
+
+.widget__menu.active {
+    height: auto;
+    max-height: 500px;
+    overflow: visible;
+    padding: 20px 15px;
+}
+
+.widget__menu-inner {
+    padding: 15px 10px;
+    font-size: 14px;
+    background: #C3DAFA;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    
+    transition: background .2s;
+
+    &:hover {
+        background: #97C2F8;
+    }
+}
+
+.widget__menu-close {
+    width: 100%;
 }
 
 .chat {
@@ -180,7 +223,7 @@
 .chat__operator-btns {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 10px;
 }
 
 .chat__operator-btn {
@@ -270,6 +313,85 @@
     background:url(../img/send.svg) no-repeat 70% 50% / 14px 14px, #D9D9D9;
     cursor: pointer;
     flex-shrink: 0;
+}
+
+// dark mode
+
+.dark__mode {
+
+    &.widget {
+        background: #3c4043;
+    }
+
+    .widget__menu {
+        background: #2d3d4b;
+    }
+
+    .widget__menu-close {
+        color: rgba(196, 199, 204, .6);
+
+        &:hover {
+            color: rgba(196, 199, 204, .9); 
+        }
+    }
+
+    .widget__top {
+        background: #0d2b45;
+        color: #c4c7cc;
+    }
+
+    .minimize__line {
+        background: #c4c7cc
+    }
+
+    .AI__top,
+    .chat__operator-header {
+        color: #b9b9b9;
+    }
+
+    .widget__head,
+    .widget__user-msg {
+        background: #2d3d4b;
+    }
+
+    .widget__user-msg  {
+        border-top: 1px solid #3c4043;
+    }
+
+    .chat__AI-text,
+    .chat__operator-text {
+        background: #869eb7;
+        color: #232323;
+    }
+
+    .chat__operator-btn {
+        background: #5d8ebf;
+        color: #232323;
+    
+        &:hover {
+            background: #2c6aad;
+        }
+    }
+
+    .chat__user-text {
+        background: #5d8ebf;
+    }
+
+    .user__message {
+        color: #c4c7cc;
+
+        &::placeholder {
+            color: #c4c7cc;
+        }
+    }
+
+    .widget__menu-inner {
+        background: #97C2F8;
+
+        &:hover {
+            background: #C3DAFA;
+        }
+    }
 }
 
 @include rm(640) {
