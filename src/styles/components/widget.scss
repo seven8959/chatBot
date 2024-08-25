@@ -176,6 +176,7 @@
 .chat__operator-connect {
     text-align: center;
     margin-bottom: 30px;
+    display: none;
 }
 
 .chat__operator-full {
@@ -185,6 +186,21 @@
 .chat__operator-header {
     font-weight: 700;
     margin-bottom: 11px;
+}
+
+.chat__operator-writes {
+    color: #C0C0C0;
+    font-size: 12px;
+    display: inline-block;
+    clip-path: inset(0 11px 0 0);  
+    animation: dots infinite 1.5s;
+    vertical-align: -webkit-baseline-middle; 
+}
+
+@keyframes dots {
+    to {
+        clip-path: inset(0 0 0 0);
+    }
 }
 
 .chat__operator-date {
@@ -212,6 +228,10 @@
     margin-right: 10px;
 }
 
+.chat__operator-msg-done {
+    display: none;
+}
+
 .chat__operator-text {
     line-height: 1.2;
     padding: 10px;
@@ -230,7 +250,7 @@
     background: $answer-bg;
     cursor: pointer;
     transition: background .3s;
-    padding: 10px 15px;
+    padding: 10px;
     font-size: 16px;
     font-family: $main-font;
     border-radius: 5px;
@@ -345,7 +365,8 @@
     }
 
     .AI__top,
-    .chat__operator-header {
+    .chat__operator-header,
+    .chat__operator-writes {
         color: #b9b9b9;
     }
 
@@ -390,6 +411,67 @@
 
         &:hover {
             background: #C3DAFA;
+        }
+    }
+
+    .dark-mode {
+        background: #6e91c1;
+
+        &:hover {
+            background: #C3DAFA;
+        }
+    }
+}
+
+// large text
+.widget.minimize.large__font {
+    height: 31px;
+}
+
+
+.large__font {
+    font-size: 18px;
+    
+    .widget__top {
+        padding: 10px 15px;
+    }
+
+    .widget__top,
+    .AI__botton,
+    .time,
+    .chat__operator-date {
+        font-size: 12px;
+    }
+
+    .widget__menu-inner {
+        font-size: 15px;
+    }
+
+    .nav__close,
+    .AI__top,
+    .chat__operator-writes {
+        font-size: 14px;
+    }
+
+    .chat__operator-writes {
+        clip-path: inset(0 13px 0 0);    
+    }
+
+    .chat__AI-text,
+    .chat__user-text {
+        margin-bottom: 10px;
+    }
+
+    .user__message,
+    .chat__operator-btn {
+        font-size: 18px;
+    }
+
+    .large-font {
+        background: #6e91c1;
+
+        &:hover {
+            background: #97c2f8;
         }
     }
 }
