@@ -130,7 +130,7 @@ export default () => {
     
     const chatStart = {
         start: {
-            question: 'Як вас звати?',
+            question: 'Доброго дня, Легітимний оператор на зв”язку. Вкажіть ваше ім`я?',
             type: 'input',
             next: 'greetUser'
         },
@@ -181,12 +181,101 @@ export default () => {
                 { type: 'statement', text: 'А як що до вашої ваги? (в кг)' }
             ],
             type: 'input',
+            next: 'askProblem'
+        },
+        askProblem: {
+            messages: [
+                { type: 'statement', text: 'Оце кабанчик, записав' },
+                { type: 'statement', text: 'Виберіть будь-ласка проблему, з якою ми можемо вам допомогти' }
+            ],
+            type: 'choice',
+            choices: [
+                { text: 'Потенція', value: 'potention' },
+                { text: 'Гіпертонія', value: 'hypertension' },
+                { text: 'Теща', value: 'wife-mother' }
+            ],
+            next: {
+                potention: 'stepPotention',
+                hypertension: 'stepHypertension',
+                wifeMother: 'stepWifeMother'
+            }
+        },
+        stepHypertension: {
+            question: 'Вкажіть ваш звичний тиск?',
+            type: 'input',
+            next: 'askHeartProblems'
+        },
+        askHeartProblems: {
+            question: 'Чи є у вас проблеми із серцем?',
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Ні', value: 'no' },
+                { text: 'Не знаю', value: 'unknown' }
+            ],
+            next: {
+                yes: 'askMedication',
+                no: 'askMedication',
+                unknown: 'askMedication'
+            }
+        },
+        askMedication: {
+            question: 'Чи приймаєте ви якісь препарати для боротьби з тиском?',
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Нерегулярно', value: 'irregular' },
+                { text: 'Кілька препаратів', value: 'multiple' }
+            ],
+            next: {
+                yes: 'askExercise',
+                irregular: 'askExercise',
+                multiple: 'askExercise'
+            }
+        },
+        askExercise: {
+            question: 'Як часто ви займаєтесь спортом?',
+            type: 'choice',
+            choices: [
+                { text: 'Щодня', value: 'daily' },
+                { text: 'Пару раз на тиждень', value: 'fewTimes' },
+                { text: 'У вихідні', value: 'weekends' },
+                { text: 'У свята', value: 'holidays' },
+                { text: 'Не займаюсь', value: 'none' }
+            ],
+            next: {
+                daily: 'askInterestInSupport',
+                fewTimes: 'askInterestInSupport',
+                weekends: 'askInterestInSupport',
+                holidays: 'askInterestInSupport',
+                none: 'askInterestInSupport'
+            }
+        },
+        askInterestInSupport: {
+            question: 'А вам цікаво, як я підтримую свій тиск?',
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Ні', value: 'no' }
+            ],
+            next: {
+                yes: 'addAudio',
+                no: 'endChatOperator'
+            }
+        },
+
+        endChatOperator: {
+            question: 'От покидьок!',
+            type: 'end'
+        },
+
+        addAudio: {
+            question: 'Анімація записує звукові повідомлення',
+            type: 'statement',
             next: 'end'
         },
-        end: {
-            question: 'Дякую, це все на сьогодні!',
-            type: 'statement',
-        }
+
+        // Другие шаги...
     };
     
     let currentStep = 'start';
@@ -195,13 +284,17 @@ export default () => {
         return template.replace(/{(\w+)}/g, (_, key) => userData[key] || '');
     }
     
-    function displayQuestion(step) {
-        const currentData = chatStart[step];
+    function renderQuestion(step) {
+        const currentData = chatStart[step];     
     
         if (currentData.messages) {
-            displayOperatorMessages(currentData.messages, currentData.type, currentData.choices, currentData.next);
+            renderOperatorMessage(currentData.messages, currentData.type, currentData.choices, currentData.next);
         } else if (currentData.question) {
             createOperatorMessage([{ text: currentData.question }], () => {
+                if (currentData.type === 'end') {
+                    endChat();
+                }
+                
                 if (currentData.type === 'choice') {
                     createChoiceButtons(currentData.choices);
                 } else if (currentData.type === 'input') {
@@ -213,13 +306,16 @@ export default () => {
         }
     }
 
-    function displayOperatorMessages(messages, type, choices, next) {
+    function renderOperatorMessage(messages, type, choices, next) {
         createOperatorMessage(messages, () => {
             if (type === 'choice') {
                 createChoiceButtons(choices);
             } else if (type === 'input' && next) {
                 // Если это шаг типа 'input', ожидаем ввода от пользователя
                 // Переключаемся на следующий шаг только после ввода
+            } else if (type === 'end') {
+                // Добавляем вызов endChat(), если шаг завершает чат
+                endChat();
             } else if (next) {
                 goToNextStep(next);
             }
@@ -227,8 +323,12 @@ export default () => {
     }
     
     function goToNextStep(nextStep) {
-        currentStep = nextStep;
-        displayQuestion(currentStep);
+        if (nextStep === 'end') {
+            endChat(); // Завершаем чат сразу
+        } else {
+            currentStep = nextStep;
+            renderQuestion(currentStep);
+        }
     }
     
     function handleUserInput() {
@@ -272,33 +372,27 @@ export default () => {
     
     function createOperatorMessage(messages, callback = null) {
     
-        const lastOperatorWrapper = document.querySelector('.chat__operator-wrapper:last-child');
         let messageContainer;
     
-        if (lastOperatorWrapper && !lastOperatorWrapper.querySelector('.chat__operator-writes')) {
-            // Если это продолжение предыдущего сообщения, добавляем в тот же блок
-            messageContainer = lastOperatorWrapper.querySelector('.chat__operator-msg');
-        } else {
-            // Иначе создаем новый блок
-            const operatorWrapper = document.createElement('div');
-            operatorWrapper.classList.add('chat__operator-wrapper');
-    
-            const operator = document.createElement('div');
-            operator.classList.add('chat__operator');
-    
-            const img = document.createElement('img');
-            img.src = 'img/operator.png';
-            img.classList.add('operator__img');
-            img.alt = '';
-    
-            messageContainer = document.createElement('div');
-            messageContainer.classList.add('chat__operator-msg');
-    
-            operator.appendChild(img);
-            operator.appendChild(messageContainer);
-            operatorWrapper.appendChild(operator);
-            document.querySelector('.chat').appendChild(operatorWrapper);
-        }
+        const operatorWrapper = document.createElement('div');
+        operatorWrapper.classList.add('chat__operator-wrapper');
+
+        const operator = document.createElement('div');
+        operator.classList.add('chat__operator');
+
+        const img = document.createElement('img');
+        img.src = 'img/operator.png';
+        img.classList.add('operator__img');
+        img.alt = '';
+
+        messageContainer = document.createElement('div');
+        messageContainer.classList.add('chat__operator-msg');
+
+        operator.appendChild(img);
+        operator.appendChild(messageContainer);
+        operatorWrapper.appendChild(operator);
+        document.querySelector('.chat').appendChild(operatorWrapper);
+  
     
         const typingMessage = document.createElement('p');
         typingMessage.classList.add('chat__operator-writes');
@@ -312,7 +406,12 @@ export default () => {
         messageText.classList.add('chat__operator-text');
         messageText.textContent = formatMessage(messages[0].text);
     
+        const timeSpan = document.createElement('span');
+        timeSpan.classList.add('time', 'time-current');
+        timeSpan.textContent = new Date().toLocaleTimeString();
+
         doneMessage.appendChild(messageText);
+        doneMessage.appendChild(timeSpan);
         messageContainer.appendChild(typingMessage);
         messageContainer.appendChild(doneMessage);
     
@@ -322,6 +421,8 @@ export default () => {
         simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
             // После первого сообщения
             if (messages.length > 1) {
+                doneMessage.removeChild(timeSpan);
+
                 const typingMessageSecond = document.createElement('p');
                 typingMessageSecond.classList.add('chat__operator-writes');
                 typingMessageSecond.classList.add('chat__operator-writes--second');
@@ -335,12 +436,12 @@ export default () => {
                 messageTextSecond.classList.add('chat__operator-text');
                 messageTextSecond.textContent = formatMessage(messages[1].text);
     
-                const timeSpan = document.createElement('span');
-                timeSpan.classList.add('time', 'time-current');
-                timeSpan.textContent = new Date().toLocaleTimeString();
+                const timeSpanSecond = document.createElement('span');
+                timeSpanSecond.classList.add('time', 'time-current');
+                timeSpanSecond.textContent = new Date().toLocaleTimeString();
     
                 doneMessageSecond.appendChild(messageTextSecond);
-                doneMessageSecond.appendChild(timeSpan);
+                doneMessageSecond.appendChild(timeSpanSecond);
                 messageContainer.appendChild(typingMessageSecond);
                 messageContainer.appendChild(doneMessageSecond);
     
@@ -354,7 +455,7 @@ export default () => {
     }
     
     function simulateTypingEffect(typingMessage, doneMessage, textLength, callback = null) {
-        const typingDuration = textLength * 100;
+        const typingDuration = textLength * 10;
         setTimeout(() => {
             typingMessage.style.display = 'none';
             doneMessage.style.display = 'block';
@@ -409,8 +510,43 @@ export default () => {
         document.querySelector('.chat').appendChild(buttonWrapper);
         scroll();
     }
+
+    function endChat() {
+        const chat = document.querySelector('.chat');
+        const operatorExitMsg = document.createElement('p');
+        operatorExitMsg.classList.add('chat__operator-header');
+        operatorExitMsg.textContent = 'Оператор вийшов з чату';
+        chat.appendChild(operatorExitMsg);
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('nav__close', 'chat__close');
+        closeButton.textContent = 'Закрити чат';
+        chat.appendChild(closeButton);
+
+        // closeButton.addEventListener('click', () => {
+        //     const widget = document.querySelector('.widget');
+        //     widget.style.display = 'none';
+        // });
+
+        closeButton.addEventListener('click', () => {
+            // Очистка сообщений и данных
+            const chatContainer = document.querySelector('.chat__operator-wrapper');
+            chatContainer.innerHTML = ''; // Очистить все сообщения
+    
+            const widget = document.querySelector('.widget');
+            widget.style.display = 'none';
+    
+            // Сброс состояния чата
+            currentStep = 'start'; // Возвращаемся к начальному шагу
+            userData = {}; // Очищаем данные пользователя
+            document.querySelector('.user__message').value = ''; // Очищаем поле ввода
+    
+            // Перезапуск чата
+            startChat(); // Перезапустить чат при следующем открытии
+        });
+    }
     
     function startChat() {
-        displayQuestion(currentStep);
+        renderQuestion(currentStep);
     }
 }
