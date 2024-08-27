@@ -1,14 +1,14 @@
 export default () => {
-    // show widget
+    // запуск виджета чатбот
     const showWidgetBtns = document.querySelectorAll('.widget-show');
     const closeWidgetMenu = document.querySelector('.widget__menu-close');
+    const operatoConnect = document.querySelector('.chat__operator-connect');
 
     showWidgetBtns.forEach(el => {
         el.addEventListener('click', function() {
             draggable.style.display = `block`;
 
-            // operator connect
-            const operatoConnect = document.querySelector('.chat__operator-connect');
+            // подключение оператора
             setTimeout(() => {
                 operatoConnect.style.display = 'block';
                 scroll();
@@ -19,7 +19,7 @@ export default () => {
         })
     })
     
-    // toggle settings
+    // кнопка настройки чата
     const settingsBtn = document.querySelector('.widget__settings');
     const widgetMenu = document.querySelector('.widget__menu');
 
@@ -31,7 +31,7 @@ export default () => {
     })
 
 
-    // settings widget
+    // настройки чата
     function useSettingsWidget() {
         widgetMenu.addEventListener('click', function(e) {
             let target = e.target;
@@ -47,7 +47,7 @@ export default () => {
     }
     useSettingsWidget();
 
-    // moving a widget
+    // перемещение виджета
     const draggable = document.querySelector('.widget');
     const movingArea = document.querySelector('.widget__top');
 
@@ -102,7 +102,7 @@ export default () => {
     window.addEventListener('resize', checkWindowSize);
 
 
-    // minimize a widget
+    // сворачивание виджета
     const minimizeBtn = document.querySelector('.widget__minimize-btn');
 
     minimizeBtn.addEventListener('click', function () {
@@ -118,6 +118,7 @@ export default () => {
     });
 
     // chatbot
+    // скроллл чата при появлении новых сообщений
     function scroll() {
         const chat = document.querySelector('.chat');
         chat.scroll({
@@ -126,8 +127,10 @@ export default () => {
         });
     }
 
+    // хранение данных юзера
     const userData = {};
     
+    // флоу чата
     const chatStart = {
         start: {
             question: 'Доброго дня, Легітимний оператор на зв”язку. Вкажіть ваше ім`я?',
@@ -280,10 +283,12 @@ export default () => {
     
     let currentStep = 'start';
 
+    // форматирование сообщения в котором есть {value}
     function formatMessage(template) {
         return template.replace(/{(\w+)}/g, (_, key) => userData[key] || '');
     }
     
+    // рендер вопросов
     function renderQuestion(step) {
         const currentData = chatStart[step];     
     
@@ -298,14 +303,14 @@ export default () => {
                 if (currentData.type === 'choice') {
                     createChoiceButtons(currentData.choices);
                 } else if (currentData.type === 'input') {
-                    // Для вопросов типа 'input' поле ввода должно быть видно
-                    document.querySelector('.user__message').value = ''; // Очищаем поле ввода перед фокусом
-                    document.querySelector('.user__message').focus(); // Фокус на поле ввода
+                    document.querySelector('.user__message').value = '';
+                    document.querySelector('.user__message').focus();
                 }
             });
         }
     }
 
+    // рендер сообщений оператора
     function renderOperatorMessage(messages, type, choices, next) {
         createOperatorMessage(messages, () => {
             if (type === 'choice') {
@@ -314,7 +319,7 @@ export default () => {
                 // Если это шаг типа 'input', ожидаем ввода от пользователя
                 // Переключаемся на следующий шаг только после ввода
             } else if (type === 'end') {
-                // Добавляем вызов endChat(), если шаг завершает чат
+                // вызов endChat(), если шаг завершает чат
                 endChat();
             } else if (next) {
                 goToNextStep(next);
@@ -322,15 +327,17 @@ export default () => {
         });
     }
     
+    // переход к следующему шагу
     function goToNextStep(nextStep) {
         if (nextStep === 'end') {
-            endChat(); // Завершаем чат сразу
+            endChat();
         } else {
             currentStep = nextStep;
             renderQuestion(currentStep);
         }
     }
-    
+
+    // слушатель поля инпут
     function handleUserInput() {
         const input = document.querySelector('.user__message').value.trim();
         if (input) {
@@ -345,6 +352,7 @@ export default () => {
         }
     }
     
+    // слушатель блоков с кнопками 
     function handleChoice(choice) {
         const currentData = chatStart[currentStep];
         createUserMessage(choice.text);
@@ -360,6 +368,7 @@ export default () => {
         }
     });
 
+    // выбор пола пользоватея и отображение выбранного значения в следующем сообщении
     document.querySelector('.chat').addEventListener('click', (event) => {
         if (event.target.classList.contains('chat__operator-btn')) {
             const choice = {
@@ -370,90 +379,68 @@ export default () => {
         }
     });
     
+    // создание сообщений оператора
     function createOperatorMessage(messages, callback = null) {
-    
-        let messageContainer;
-    
         const operatorWrapper = document.createElement('div');
         operatorWrapper.classList.add('chat__operator-wrapper');
-
+    
         const operator = document.createElement('div');
         operator.classList.add('chat__operator');
-
+    
         const img = document.createElement('img');
         img.src = 'img/operator.png';
         img.classList.add('operator__img');
         img.alt = '';
-
-        messageContainer = document.createElement('div');
+    
+        const messageContainer = document.createElement('div');
         messageContainer.classList.add('chat__operator-msg');
-
+    
         operator.appendChild(img);
         operator.appendChild(messageContainer);
         operatorWrapper.appendChild(operator);
         document.querySelector('.chat').appendChild(operatorWrapper);
-  
     
-        const typingMessage = document.createElement('p');
-        typingMessage.classList.add('chat__operator-writes');
-        typingMessage.textContent = 'Друкує повідомлення...';
+        let currentIndex = 0;
     
-        const doneMessage = document.createElement('div');
-        doneMessage.classList.add('chat__operator-msg-done');
-        doneMessage.style.display = 'none';
-    
-        const messageText = document.createElement('p');
-        messageText.classList.add('chat__operator-text');
-        messageText.textContent = formatMessage(messages[0].text);
-    
-        const timeSpan = document.createElement('span');
-        timeSpan.classList.add('time', 'time-current');
-        timeSpan.textContent = new Date().toLocaleTimeString();
-
-        doneMessage.appendChild(messageText);
-        doneMessage.appendChild(timeSpan);
-        messageContainer.appendChild(typingMessage);
-        messageContainer.appendChild(doneMessage);
-    
-        scroll();
-    
-        // Первое сообщение
-        simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
-            // После первого сообщения
-            if (messages.length > 1) {
-                doneMessage.removeChild(timeSpan);
-
-                const typingMessageSecond = document.createElement('p');
-                typingMessageSecond.classList.add('chat__operator-writes');
-                typingMessageSecond.classList.add('chat__operator-writes--second');
-                typingMessageSecond.textContent = 'Друкує повідомлення...';
-    
-                const doneMessageSecond = document.createElement('div');
-                doneMessageSecond.classList.add('chat__operator-msg-done--second');
-                doneMessageSecond.style.display = 'none';
-    
-                const messageTextSecond = document.createElement('p');
-                messageTextSecond.classList.add('chat__operator-text');
-                messageTextSecond.textContent = formatMessage(messages[1].text);
-    
-                const timeSpanSecond = document.createElement('span');
-                timeSpanSecond.classList.add('time', 'time-current');
-                timeSpanSecond.textContent = new Date().toLocaleTimeString();
-    
-                doneMessageSecond.appendChild(messageTextSecond);
-                doneMessageSecond.appendChild(timeSpanSecond);
-                messageContainer.appendChild(typingMessageSecond);
-                messageContainer.appendChild(doneMessageSecond);
-    
-                scroll();
-    
-                simulateTypingEffect(typingMessageSecond, doneMessageSecond, messageTextSecond.textContent.length, callback);
-            } else if (callback) {
-                callback();
+        function renderNextMessage() {
+            if (currentIndex >= messages.length) {
+                if (callback) callback();
+                return;
             }
-        });
+    
+            const typingMessage = document.createElement('p');
+            typingMessage.classList.add('chat__operator-writes');
+            typingMessage.textContent = 'Друкує повідомлення...';
+    
+            const doneMessage = document.createElement('div');
+            doneMessage.classList.add('chat__operator-msg-done');
+            doneMessage.style.display = 'none';
+    
+            const messageText = document.createElement('p');
+            messageText.classList.add('chat__operator-text');
+            messageText.textContent = formatMessage(messages[currentIndex].text);
+    
+            const timeSpan = document.createElement('span');
+            timeSpan.classList.add('time', 'time-current');
+            timeSpan.textContent = new Date().toLocaleTimeString();
+    
+            doneMessage.appendChild(messageText);
+            doneMessage.appendChild(timeSpan);
+            messageContainer.appendChild(typingMessage);
+            messageContainer.appendChild(doneMessage);
+    
+            scroll();
+    
+            simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
+                currentIndex++;
+                renderNextMessage();
+            });
+        }
+    
+        renderNextMessage();
     }
     
+    // анимация набора текста и скорость набора
     function simulateTypingEffect(typingMessage, doneMessage, textLength, callback = null) {
         const typingDuration = textLength * 10;
         setTimeout(() => {
@@ -466,6 +453,7 @@ export default () => {
         }, typingDuration);
     }
     
+    // создание сообщений пользователя
     function createUserMessage(text) {
         const userWrapper = document.createElement('div');
         userWrapper.classList.add('chat__user');
@@ -495,6 +483,7 @@ export default () => {
         scroll();
     }
     
+    // создание кнопок выбора
     function createChoiceButtons(choices) {
         const buttonWrapper = document.createElement('div');
         buttonWrapper.classList.add('chat__operator-btns');
@@ -511,41 +500,40 @@ export default () => {
         scroll();
     }
 
+    // завершение чата
     function endChat() {
         const chat = document.querySelector('.chat');
+        const chatOperatorClose = document.createElement('div');
         const operatorExitMsg = document.createElement('p');
+        chatOperatorClose.classList.add('chat__operator-close');
         operatorExitMsg.classList.add('chat__operator-header');
         operatorExitMsg.textContent = 'Оператор вийшов з чату';
-        chat.appendChild(operatorExitMsg);
+        chat.appendChild(chatOperatorClose);
+        chatOperatorClose.appendChild(operatorExitMsg);
 
         const closeButton = document.createElement('button');
         closeButton.classList.add('nav__close', 'chat__close');
         closeButton.textContent = 'Закрити чат';
-        chat.appendChild(closeButton);
-
-        // closeButton.addEventListener('click', () => {
-        //     const widget = document.querySelector('.widget');
-        //     widget.style.display = 'none';
-        // });
+        chatOperatorClose.appendChild(closeButton);
 
         closeButton.addEventListener('click', () => {
-            // Очистка сообщений и данных
-            const chatContainer = document.querySelector('.chat__operator-wrapper');
-            chatContainer.innerHTML = ''; // Очистить все сообщения
+            // Очистка всех сообщений
+            operatoConnect.style.display = 'none';
+
+            const chatOperatorWrappers = document.querySelectorAll('.chat__operator-wrapper, .chat__operator-btns, .chat__user, .chat__operator-close');
+            chatOperatorWrappers[0].remove();
+            chatOperatorWrappers.forEach(el => el.remove());
     
             const widget = document.querySelector('.widget');
             widget.style.display = 'none';
     
             // Сброс состояния чата
-            currentStep = 'start'; // Возвращаемся к начальному шагу
-            userData = {}; // Очищаем данные пользователя
-            document.querySelector('.user__message').value = ''; // Очищаем поле ввода
-    
-            // Перезапуск чата
-            startChat(); // Перезапустить чат при следующем открытии
+            currentStep = 'start';
+            Object.keys(userData).forEach(key => delete userData[key]);
         });
     }
     
+    // функция старта чата
     function startChat() {
         renderQuestion(currentStep);
     }
