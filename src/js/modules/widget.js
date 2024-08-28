@@ -305,6 +305,7 @@ export default () => {
                 } else if (currentData.type === 'input') {
                     document.querySelector('.user__message').value = '';
                     document.querySelector('.user__message').focus();
+                    inputEnabled = true; // Включаем ввод данных
                 }
             });
         }
@@ -327,20 +328,10 @@ export default () => {
         });
     }
     
-    // переход к следующему шагу
-    function goToNextStep(nextStep) {
-        if (nextStep === 'end') {
-            endChat();
-        } else {
-            currentStep = nextStep;
-            renderQuestion(currentStep);
-        }
-    }
-
     // слушатель поля инпут
     function handleUserInput() {
         const input = document.querySelector('.user__message').value.trim();
-        if (input) {
+        if (inputEnabled && input) { // Проверяем, включен ли ввод данных
             if (currentStep === 'start') {
                 userData.value = input; // Сохраняем имя пользователя
             } else if (chatStart[currentStep].type === 'input') {
@@ -348,6 +339,7 @@ export default () => {
             }
             createUserMessage(input); // Отображаем сообщение пользователя
             document.querySelector('.user__message').value = ''; // Очищаем поле ввода
+            inputEnabled = false; // Выключаем ввод данных до следующего сообщения
             goToNextStep(chatStart[currentStep].next);
         }
     }
@@ -378,9 +370,31 @@ export default () => {
             handleChoice(choice);
         }
     });
+
+    // переход к следующему шагу
+    function goToNextStep(nextStep) {
+        const inputField = document.querySelector('.user__message');
+        currentStep = nextStep;
+    
+        if (nextStep === 'end') {
+            endChat(); // Завершаем чат сразу
+        } else {
+            renderQuestion(currentStep); // Отображаем вопрос оператора
+        }
+    
+        if (chatStart[currentStep].type === 'input') {
+            inputField.disabled = true; // блокируем ввод до конца печати сообщений
+        } else {
+            inputField.disabled = true;
+        }
+    }
+
+    let inputEnabled = false; // Флаг для контроля ввода
     
     // создание сообщений оператора
     function createOperatorMessage(messages, callback = null) {
+        let messageContainer;
+    
         const operatorWrapper = document.createElement('div');
         operatorWrapper.classList.add('chat__operator-wrapper');
     
@@ -392,7 +406,7 @@ export default () => {
         img.classList.add('operator__img');
         img.alt = '';
     
-        const messageContainer = document.createElement('div');
+        messageContainer = document.createElement('div');
         messageContainer.classList.add('chat__operator-msg');
     
         operator.appendChild(img);
@@ -400,57 +414,84 @@ export default () => {
         operatorWrapper.appendChild(operator);
         document.querySelector('.chat').appendChild(operatorWrapper);
     
-        let currentIndex = 0;
+        const typingMessage = document.createElement('p');
+        typingMessage.classList.add('chat__operator-writes');
+        typingMessage.textContent = 'Друкує повідомлення...';
     
-        function renderNextMessage() {
-            if (currentIndex >= messages.length) {
+        const doneMessage = document.createElement('div');
+        doneMessage.classList.add('chat__operator-msg-done');
+        doneMessage.style.display = 'none';
+    
+        const messageText = document.createElement('p');
+        messageText.classList.add('chat__operator-text');
+        messageText.textContent = formatMessage(messages[0].text);
+    
+        const timeSpan = document.createElement('span');
+        timeSpan.classList.add('time', 'time-current');
+        timeSpan.textContent = new Date().toLocaleTimeString();
+    
+        doneMessage.appendChild(messageText);
+        doneMessage.appendChild(timeSpan);
+        messageContainer.appendChild(typingMessage);
+        messageContainer.appendChild(doneMessage);
+    
+        scroll();
+    
+        const inputField = document.querySelector('.user__message');
+        inputField.disabled = true; // блокировка ввода
+    
+        // анимация печати и переключение на следующий шаг
+        simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
+            if (messages.length > 1) {
+                doneMessage.removeChild(timeSpan);
+    
+                const typingMessageSecond = document.createElement('p');
+                typingMessageSecond.classList.add('chat__operator-writes');
+                typingMessageSecond.classList.add('chat__operator-writes--second');
+                typingMessageSecond.textContent = 'Друкує повідомлення...';
+    
+                const doneMessageSecond = document.createElement('div');
+                doneMessageSecond.classList.add('chat__operator-msg-done--second');
+                doneMessageSecond.style.display = 'none';
+    
+                const messageTextSecond = document.createElement('p');
+                messageTextSecond.classList.add('chat__operator-text');
+                messageTextSecond.textContent = formatMessage(messages[1].text);
+    
+                const timeSpanSecond = document.createElement('span');
+                timeSpanSecond.classList.add('time', 'time-current');
+                timeSpanSecond.textContent = new Date().toLocaleTimeString();
+    
+                doneMessageSecond.appendChild(messageTextSecond);
+                doneMessageSecond.appendChild(timeSpanSecond);
+                messageContainer.appendChild(typingMessageSecond);
+                messageContainer.appendChild(doneMessageSecond);
+    
+                scroll();
+    
+                simulateTypingEffect(typingMessageSecond, doneMessageSecond, messageTextSecond.textContent.length, () => {
+                    inputField.disabled = false; // включение ввода после печати всех сообщений
+                    if (callback) callback();
+                });
+            } else {
+                inputField.disabled = false; // включение ввода после одного сообщения
                 if (callback) callback();
-                return;
             }
-    
-            const typingMessage = document.createElement('p');
-            typingMessage.classList.add('chat__operator-writes');
-            typingMessage.textContent = 'Друкує повідомлення...';
-    
-            const doneMessage = document.createElement('div');
-            doneMessage.classList.add('chat__operator-msg-done');
-            doneMessage.style.display = 'none';
-    
-            const messageText = document.createElement('p');
-            messageText.classList.add('chat__operator-text');
-            messageText.textContent = formatMessage(messages[currentIndex].text);
-    
-            const timeSpan = document.createElement('span');
-            timeSpan.classList.add('time', 'time-current');
-            timeSpan.textContent = new Date().toLocaleTimeString();
-    
-            doneMessage.appendChild(messageText);
-            doneMessage.appendChild(timeSpan);
-            messageContainer.appendChild(typingMessage);
-            messageContainer.appendChild(doneMessage);
-    
-            scroll();
-    
-            simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
-                currentIndex++;
-                renderNextMessage();
-            });
-        }
-    
-        renderNextMessage();
+        });
     }
-    
+
     // анимация набора текста и скорость набора
-    function simulateTypingEffect(typingMessage, doneMessage, textLength, callback = null) {
-        const typingDuration = textLength * 10;
+    function simulateTypingEffect(typingElement, doneElement, typingDuration, callback = null) {
+        typingElement.style.display = 'block';
         setTimeout(() => {
-            typingMessage.style.display = 'none';
-            doneMessage.style.display = 'block';
-            if (callback) {
-                callback();
-            }
+            typingElement.style.display = 'none';
+            doneElement.style.display = 'block';
             scroll();
-        }, typingDuration);
+    
+            inputEnabled = true; // включаем ввод после завершения анимации
+    
+            if (callback) callback();
+        }, typingDuration * 10); // скорость печати
     }
     
     // создание сообщений пользователя
@@ -519,7 +560,6 @@ export default () => {
         closeButton.addEventListener('click', () => {
             // Очистка всех сообщений
             operatoConnect.style.display = 'none';
-
             const chatOperatorWrappers = document.querySelectorAll('.chat__operator-wrapper, .chat__operator-btns, .chat__user, .chat__operator-close');
             chatOperatorWrappers[0].remove();
             chatOperatorWrappers.forEach(el => el.remove());
@@ -527,9 +567,13 @@ export default () => {
             const widget = document.querySelector('.widget');
             widget.style.display = 'none';
     
-            // Сброс состояния чата
+            // Сброс состояния чата            
             currentStep = 'start';
             Object.keys(userData).forEach(key => delete userData[key]);
+
+            inputEnabled = false;
+            const inputField = document.querySelector('.user__message');
+            inputField.disabled = true;
         });
     }
     
