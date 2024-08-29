@@ -189,7 +189,8 @@
     text-align: center;
 }
 
-.chat__operator-writes {
+.chat__operator-writes,
+.chat__operator-record {
     color: #C0C0C0;
     font-size: 12px;
     display: inline-block;
@@ -335,6 +336,91 @@
     cursor: pointer;
     flex-shrink: 0;
 }
+
+.record {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: $question-bg;
+    margin-right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat__operator-record {
+    animation: none;
+    color: $text-color;
+    display: flex;
+    align-items: center;
+    clip-path: none;
+}
+
+.record__line {
+    display: block;
+    width: 2px;
+    height: 15px;
+    background: $text-color;
+    border-radius: 10px;
+    animation: equalizer 0.8s infinite alternate;
+
+    &:not(:last-of-type) {
+        margin-right: 2px;
+    }
+}
+
+.record__line--2 {
+    animation-duration: .7s;
+}
+
+.record__line--3 {
+    animation-duration: .9s;
+}
+
+.record__line--4 {
+    animation-duration: .6s;
+}
+
+@keyframes equalizer {
+    0% {
+        height: 1px;
+    }
+    100% {
+        height: 15px;
+    }
+}
+
+.record__img {
+    background: $question-bg;
+    padding: 4px 9px;
+    border-radius: 70px;
+    width: 132px;
+    margin-right: 10px;
+}
+
+.chat__operator-record-done {
+    display: flex;
+    align-items: center;
+}
+
+.record__time-inner {
+    font-size: 12px;
+    color: $text-color;
+    margin-right: 10px;
+}
+
+.record__btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: url(../img/play.svg) no-repeat 8px 6px / 10px, $question-bg;
+}
+
+.record__btn.pause {
+    background: url(../img/pause.svg) no-repeat 7px 6px / 11px, $question-bg;
+}
+
 
 // dark mode
 

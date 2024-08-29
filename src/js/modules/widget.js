@@ -578,7 +578,7 @@ export default () => {
     }
     
     // функция старта чата
-    function startChat() {
-        renderQuestion(currentStep);
-    }
+    // function startChat() {
+    //     renderQuestion(currentStep);
+    // }
 }
