@@ -9,7 +9,7 @@ const paths = {
     templates: 'src/templates',
     styles: 'src/styles',
     scripts: 'src/js',
-    img: 'src/img/*.+(jpg|jpeg|png|svg|ico|gif|webp)',
+    img: 'src/img/*.+(jpg|jpeg|png|svg|ico|gif|webp|mp3)',
     svg: 'src/img/**/*.svg',
     fonts: 'src/fonts/**/*',
     localization: "src/localization/*.json"

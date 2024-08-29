@@ -273,9 +273,8 @@ export default () => {
         },
 
         addAudio: {
-            question: 'Анімація записує звукові повідомлення',
-            type: 'statement',
-            next: 'end'
+            type: 'audio',
+            next: 'form'
         },
 
         // Другие шаги...
@@ -292,15 +291,20 @@ export default () => {
     function renderQuestion(step) {
         const currentData = chatStart[step];     
     
-        if (currentData.messages) {
+        if (currentData.type === 'audio') { // если тайп аудио, рендер блока аудио
+            renderAudioRecording(() => {
+                createAudioPlayer(); 
+                goToNextStep(currentData.next);
+            });
+        } else if (currentData.messages) { // рендер сообщений оператора
             renderOperatorMessage(currentData.messages, currentData.type, currentData.choices, currentData.next);
-        } else if (currentData.question) {
+        } else if (currentData.question) { // рендер вопроса оператора
             createOperatorMessage([{ text: currentData.question }], () => {
-                if (currentData.type === 'end') {
+                if (currentData.type === 'end') { // если тайп end, запуск функции окончания чата
                     endChat();
                 }
                 
-                if (currentData.type === 'choice') {
+                if (currentData.type === 'choice') { // если тайп choice, создаем кнопки
                     createChoiceButtons(currentData.choices);
                 } else if (currentData.type === 'input') {
                     document.querySelector('.user__message').value = '';
@@ -326,6 +330,63 @@ export default () => {
                 goToNextStep(next);
             }
         });
+    }
+
+    // рендер блока аудио
+    function renderAudioRecording(callback) {
+        const operatorWrapper = document.createElement('div');
+        operatorWrapper.classList.add('chat__operator-wrapper');
+    
+        const operator = document.createElement('div');
+        operator.classList.add('chat__operator');
+    
+        const img = document.createElement('img');
+        img.src = 'img/operator.png';
+        img.classList.add('operator__img');
+        img.alt = '';
+    
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('chat__operator-msg');
+    
+        const recordingBlock = document.createElement('div');
+        recordingBlock.classList.add('chat__operator-record');
+        recordingBlock.innerHTML = `
+            <div class="record">
+                <span class="record__line"></span>
+                <span class="record__line record__line--2"></span>
+                <span class="record__line record__line--3"></span>
+                <span class="record__line record__line--4"></span>
+            </div>
+            <p>Записує аудіо повідомлення...</p>
+        `;
+    
+        const doneRecordingBlock = document.createElement('div');
+        doneRecordingBlock.classList.add('chat__operator-record-done');
+        doneRecordingBlock.style.display = 'none';
+        doneRecordingBlock.innerHTML = `
+            <div class="record__img">
+                <img src="img/equalizer.svg" class="audio" alt="" />
+            </div>
+            <div class="record__time-inner">
+                <span class="record__progres">00:00</span> / <span class="record__time">00:24</span>
+            </div>
+            <button class="record__btn play"></button>
+        `;
+    
+        messageContainer.appendChild(recordingBlock);
+        messageContainer.appendChild(doneRecordingBlock);
+        operator.appendChild(img);
+        operator.appendChild(messageContainer);
+        operatorWrapper.appendChild(operator);
+        document.querySelector('.chat').appendChild(operatorWrapper);
+    
+        scroll();
+    
+        setTimeout(() => {
+            recordingBlock.style.display = 'none';
+            doneRecordingBlock.style.display = 'flex';
+            callback();
+        }, 4000);
     }
     
     // слушатель поля инпут
@@ -541,6 +602,54 @@ export default () => {
         scroll();
     }
 
+    // создание аудиоплеераs
+    function createAudioPlayer() {
+        const audio = new Audio('img/penki.mp3');
+        const playButton = document.querySelector('.record__btn');
+        const progressDisplay = document.querySelector('.record__progres');
+        const totalTimeDisplay = document.querySelector('.record__time');
+    
+        audio.addEventListener('loadedmetadata', () => {
+            totalTimeDisplay.textContent = formatTime(audio.duration);
+        });
+    
+        playButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playButton.classList.add('pause');
+                updateProgress(progressDisplay, audio);
+            } else {
+                audio.pause();
+                playButton.classList.remove('pause');
+            }
+        });
+    
+        audio.addEventListener('timeupdate', () => {
+            progressDisplay.textContent = formatTime(audio.currentTime);
+        });
+    
+        audio.addEventListener('ended', () => {
+            playButton.classList.remove('pause');
+            progressDisplay.textContent = '00:00';
+        });
+    }
+    
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    
+    function updateProgress(display, audio) {
+        const interval = setInterval(() => {
+            if (audio.paused || audio.ended) {
+                clearInterval(interval);
+            } else {
+                display.textContent = formatTime(audio.currentTime);
+            }
+        }, 500);
+    }
+
     // завершение чата
     function endChat() {
         const chat = document.querySelector('.chat');
@@ -578,7 +687,7 @@ export default () => {
     }
     
     // функция старта чата
-    // function startChat() {
-    //     renderQuestion(currentStep);
-    // }
+    function startChat() {
+        renderQuestion(currentStep);
+    }
 }
