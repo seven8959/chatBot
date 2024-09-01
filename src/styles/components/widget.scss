@@ -199,6 +199,10 @@
     vertical-align: -webkit-baseline-middle; 
 }
 
+.chat__operator-record {
+    font-size: 11px;
+}
+
 @keyframes dots {
     to {
         clip-path: inset(0 0 0 0);
@@ -340,9 +344,10 @@
 .record {
     width: 27px;
     height: 27px;
+    flex-shrink: 0;
     border-radius: 50%;
     background: $question-bg;
-    margin-right: 14px;
+    margin-right: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -350,7 +355,7 @@
 
 .chat__operator-record {
     animation: none;
-    color: $text-color;
+    color: #c0c0c0;
     display: flex;
     align-items: center;
     clip-path: none;
@@ -394,7 +399,8 @@
     background: $question-bg;
     padding: 4px 9px;
     border-radius: 70px;
-    width: 132px;
+    max-width: 70px;
+    width: 100%;
     margin-right: 10px;
 }
 
@@ -412,6 +418,7 @@
 .record__btn {
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
     border-radius: 50%;
     cursor: pointer;
     background: url(../img/play.svg) no-repeat 8px 6px / 10px, $question-bg;
@@ -421,6 +428,25 @@
     background: url(../img/pause.svg) no-repeat 7px 6px / 11px, $question-bg;
 }
 
+.form__inner.widget__form {
+    display: none;
+    margin-bottom: 15px;
+
+}
+
+.widget__form {
+    padding: 25px 15px;
+ 
+    .form__header {
+        font-size: 22px;
+    }
+
+    .form__input,
+    .form__btn {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
 
 // dark mode
 
@@ -442,9 +468,36 @@
         }
     }
 
-    .widget__top {
+    .widget__top,
+    .widget__form {
         background: #0d2b45;
         color: #c4c7cc;
+    }
+
+    .widget__form .form__header, 
+    .widget__form .form__subheader {
+        color: #c4c7cc;
+    }
+
+    .widget__form {
+
+        .form__input {
+            background: #d9d9d9;
+            color: #555;
+
+            &::placeholder {
+                color: #555;
+            }
+        } 
+        
+        .form__btn {
+            background: #97c2f8;
+            color: #555;
+
+            &:hover {
+                background: #6e91c1;
+            }
+        }
     }
 
     .minimize__line {
@@ -467,9 +520,20 @@
     }
 
     .chat__AI-text,
-    .chat__operator-text {
+    .chat__operator-text,
+    .record__img,
+    .record {
         background: #869eb7;
         color: #232323;
+    }
+
+    .record__btn {
+        background-color: #869eb7;
+    }
+
+    .record__time-inner,
+    .record+p {
+        color: #ccc;
     }
 
     .chat__operator-btn {
@@ -514,7 +578,6 @@
 .widget.minimize.large__font {
     height: 31px;
 }
-
 
 .large__font {
     font-size: 18px;
@@ -566,5 +629,37 @@
 @include rm(640) {
     .widget {
         width: 375px;
+    }
+
+    .record {
+        margin-right: 14px;
+    }
+
+    .chat__operator-record {
+        font-size: 12px;
+    }
+
+    .record__img {
+        max-width: 132px;
+    }
+
+    .widget__form {
+        padding: 25px 19px;
+     
+        .form__header {
+            font-size: 24px;
+        }
+    
+        .form__input,
+        .form__btn {
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+    }
+}
+
+@include rm(1250) {
+    .widget__form {
+        padding: 25px 19px;
     }
 }

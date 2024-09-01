@@ -274,9 +274,30 @@ export default () => {
 
         addAudio: {
             type: 'audio',
-            next: 'form'
+            audioFile: 'penki.mp3',
+            next: 'addOffer'
         },
 
+        addOffer: {
+            messages: [
+                { type: 'statement', text: `А ще є один засіб, яким хочу з вами поділитись, це вітамінний комплекс <b>nomralife</b> за ціною 200$ за флакончик, він стабілізує тиск і допомагає утримувати його на одному рівні.` },
+                { type: 'statement', text: 'ви бажаєте спробувати повний курс чи взяти один флакон на пробу?' }
+            ],
+            type: 'choice',
+            choices: [
+                { text: 'повний курс', value: 'fullCourse' },
+                { text: 'один флакон', value: 'oneBottle' }
+            ],
+            next: {
+                fullCourse: 'addForm',
+                oneBottle: 'addForm',
+            }
+        },
+
+        addForm: {
+            type: 'form',
+            next: 'end'
+        },
         // Другие шаги...
     };
     
@@ -296,6 +317,8 @@ export default () => {
                 createAudioPlayer(); 
                 goToNextStep(currentData.next);
             });
+        } else if (currentData.type === 'form') {
+            showForm();
         } else if (currentData.messages) { // рендер сообщений оператора
             renderOperatorMessage(currentData.messages, currentData.type, currentData.choices, currentData.next);
         } else if (currentData.question) { // рендер вопроса оператора
@@ -334,6 +357,10 @@ export default () => {
 
     // рендер блока аудио
     function renderAudioRecording(callback) {
+        const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
+        const audioElement = document.createElement('audio');
+        audioElement.src = `img/${audioData}`;
+        
         const operatorWrapper = document.createElement('div');
         operatorWrapper.classList.add('chat__operator-wrapper');
     
@@ -485,7 +512,7 @@ export default () => {
     
         const messageText = document.createElement('p');
         messageText.classList.add('chat__operator-text');
-        messageText.textContent = formatMessage(messages[0].text);
+        messageText.innerHTML = formatMessage(messages[0].text);
     
         const timeSpan = document.createElement('span');
         timeSpan.classList.add('time', 'time-current');
@@ -517,7 +544,7 @@ export default () => {
     
                 const messageTextSecond = document.createElement('p');
                 messageTextSecond.classList.add('chat__operator-text');
-                messageTextSecond.textContent = formatMessage(messages[1].text);
+                messageTextSecond.innerHTML = formatMessage(messages[1].text);
     
                 const timeSpanSecond = document.createElement('span');
                 timeSpanSecond.classList.add('time', 'time-current');
@@ -604,6 +631,9 @@ export default () => {
 
     // создание аудиоплеераs
     function createAudioPlayer() {
+        const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
+        const audioElement = document.createElement('audio');
+        audioElement.src = `img/${audioData}`;
         const audio = new Audio('img/penki.mp3');
         const playButton = document.querySelector('.record__btn');
         const progressDisplay = document.querySelector('.record__progres');
@@ -650,6 +680,16 @@ export default () => {
         }, 500);
     }
 
+    function showForm() {
+        const chat = document.querySelector('.chat');
+        const form = document.querySelector('.form__inner.widget__form');
+        chat.appendChild(form);
+        form.style.display = 'block';
+
+        scroll();
+        endChat();
+    }
+
     // завершение чата
     function endChat() {
         const chat = document.querySelector('.chat');
@@ -665,6 +705,7 @@ export default () => {
         closeButton.classList.add('nav__close', 'chat__close');
         closeButton.textContent = 'Закрити чат';
         chatOperatorClose.appendChild(closeButton);
+        scroll();
 
         closeButton.addEventListener('click', () => {
             // Очистка всех сообщений
@@ -672,6 +713,9 @@ export default () => {
             const chatOperatorWrappers = document.querySelectorAll('.chat__operator-wrapper, .chat__operator-btns, .chat__user, .chat__operator-close');
             chatOperatorWrappers[0].remove();
             chatOperatorWrappers.forEach(el => el.remove());
+
+            const form = document.querySelector('.form__inner.widget__form');
+            form.style.display = 'none';
     
             const widget = document.querySelector('.widget');
             widget.style.display = 'none';
