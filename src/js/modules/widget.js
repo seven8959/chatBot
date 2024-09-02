@@ -254,6 +254,7 @@ export default () => {
                 none: 'askInterestInSupport'
             }
         },
+
         askInterestInSupport: {
             question: 'А вам цікаво, як я підтримую свій тиск?',
             type: 'choice',
@@ -281,24 +282,152 @@ export default () => {
         addOffer: {
             messages: [
                 { type: 'statement', text: `А ще є один засіб, яким хочу з вами поділитись, це вітамінний комплекс <b>nomralife</b> за ціною 200$ за флакончик, він стабілізує тиск і допомагає утримувати його на одному рівні.` },
-                { type: 'statement', text: 'ви бажаєте спробувати повний курс чи взяти один флакон на пробу?' }
+                { type: 'statement', text: 'Ви бажаєте спробувати повний курс чи взяти один флакон на пробу?' }
             ],
             type: 'choice',
             choices: [
-                { text: 'повний курс', value: 'fullCourse' },
-                { text: 'один флакон', value: 'oneBottle' }
+                { text: 'Повний курс', value: 'fullCourse' },
+                { text: 'Один флакон', value: 'oneBottle' }
             ],
             next: {
-                fullCourse: 'addForm',
-                oneBottle: 'addForm',
+                fullCourse: 'askData',
+                oneBottle: 'askData',
             }
         },
 
-        addForm: {
-            type: 'form',
-            next: 'end'
+        askData: {
+            question: 'Ви погоджуєтесь повідомити нам свій телефон для оформлення заявки, щоб з вами міг зв`язатися наш оператор?',
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Ні', value: 'no' }
+            ],
+            next: {
+                yes: 'askPhone',
+                no: 'sayBay'
+            }
         },
-        // Другие шаги...
+
+        askPhone: {
+            question: 'Вкажіть номер телефону',
+            type: 'input',
+            next: 'endChat'
+        },
+
+        endChat: {
+            question: 'Дякую, ми оформили заявку на ваше ім`я, чекайте, найближчим часом з вами зв`яжеться наш оператор, тримайте телефон поруч',
+            type: 'end',
+        },
+
+        sayBay: {
+            question: 'Ну що ж, ми пройшли такий шлях, познайомились. Відкрию вам секрет, всю інформацію, яку ви мені надали, я запам”ятаю. Це буде нашим секретом.',
+            type: 'end',
+        },
+
+        // флоу потенции
+        stepPotention: {
+            question: 'Як часто ви відчуваєте стрес?',
+            type: 'input',
+            next: 'askSex'
+        },
+
+        askSex: {
+            question: 'Скільки разів ви займаєтеся сексом на місяць у середньому?',
+            type: 'choice',
+            choices: [
+                { text: '1-2', value: 'few' },
+                { text: '2-4', value: 'belowАverage' },
+                { text: '5-7', value: 'average' },
+                { text: '8-10', value: 'many' }
+            ],
+            next: {
+                few: 'askProstateMassage',
+                belowАverage: 'askProstateMassage',
+                average: 'askProstateMassage',
+                many: 'askProstateMassage'
+            }
+        },
+
+        askProstateMassage: {
+            question: 'Як часто ви масажуєте простату?',
+            type: 'choice',
+            choices: [
+                { text: 'Раз на тиждень', value: 'onceWeek' },
+                { text: 'Раз на місяць', value: 'onceMonth' },
+                { text: 'Раз на рік', value: 'onceYear' }
+            ],
+            next: {
+                onceWeek: 'askProblemPartner',
+                onceMonth: 'askProblemPartner',
+                onceYear: 'askProblemPartner'
+            }
+        },
+
+        askProblemPartner: {
+            question: 'Ваші проблеми тільки з партнером чи наодинці теж?',
+            type: 'input',
+            next: 'askDesireSex'
+        },
+
+        askDesireSex: {
+            question: 'В який час доби ви волієте займатися сексом?',
+            type: 'choice',
+            choices: [
+                { text: 'Вранці', value: 'morning' },
+                { text: 'Вдень', value: 'day' },
+                { text: 'Увечері', value: 'evening' },
+                { text: 'Вночі', value: 'night' }
+            ],
+            next: {
+                morning: 'askHowLongProblems',
+                day: 'askHowLongProblems',
+                evening: 'askHowLongProblems',
+                night: 'askHowLongProblems'
+            }
+        },
+
+        askHowLongProblems: {
+            question: 'Як давно почалися ваші проблеми',
+            type: 'input',
+            next: 'askSupport'
+        },
+
+        askSupport: {
+            question: 'Пропоную вам укласти договір, на надання медичних послуг та психологічну підтримку, чи згодні?',
+            type: 'choice',
+            choices: [
+                { text: 'Згоден', value: 'yesPotention' },
+                { text: 'Не згоден', value: 'noPotention' }
+            ],
+            next: {
+                yesPotention: 'addAudioPotention',
+                noPotention: 'dontAgree'
+            }
+        },
+
+        addAudioPotention: {
+            type: 'audio',
+            audioFile: 'namereniya.mp3',
+            next: 'dontAgree'
+        },
+
+        dontAgree: {
+            messages: [
+                { type: 'statement', text: `Зважаючи на все у вас знижено лібідо, у зв'язку з цим ми можемо рекомендувати вам <b>Dominator</b> для вирішення ваших проблем.` },
+                { type: 'statement', text: `Ми рекомендуємо вам пройти повний курс(комплекс) прийняття <b>Dominator</b>, за ціною 180$, якщо ви сумніваєтеся, можете взяти одну упаковку для проби. Що б ви вирішили спробувати?` }
+            ],
+            type: 'choice',
+            choices: [
+                { text: 'Повний курс', value: 'fullCourse' },
+                { text: 'Одну упаковку', value: 'oneBottle' }
+            ],
+            next: {
+                fullCourse: 'askData',
+                oneBottle: 'askData',
+            }
+        },
+
+        // Флоу теща
     };
     
     let currentStep = 'start';
@@ -317,8 +446,6 @@ export default () => {
                 createAudioPlayer(); 
                 goToNextStep(currentData.next);
             });
-        } else if (currentData.type === 'form') {
-            showForm();
         } else if (currentData.messages) { // рендер сообщений оператора
             renderOperatorMessage(currentData.messages, currentData.type, currentData.choices, currentData.next);
         } else if (currentData.question) { // рендер вопроса оператора
@@ -358,6 +485,8 @@ export default () => {
     // рендер блока аудио
     function renderAudioRecording(callback) {
         const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
+        console.log(audioData);
+        
         const audioElement = document.createElement('audio');
         audioElement.src = `img/${audioData}`;
         
@@ -632,9 +761,11 @@ export default () => {
     // создание аудиоплеераs
     function createAudioPlayer() {
         const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
+        console.log('создание плеера', audioData)
         const audioElement = document.createElement('audio');
         audioElement.src = `img/${audioData}`;
-        const audio = new Audio('img/penki.mp3');
+        const audio = new Audio(audioElement.src);
+        console.log(audio)
         const playButton = document.querySelector('.record__btn');
         const progressDisplay = document.querySelector('.record__progres');
         const totalTimeDisplay = document.querySelector('.record__time');
@@ -680,16 +811,6 @@ export default () => {
         }, 500);
     }
 
-    function showForm() {
-        const chat = document.querySelector('.chat');
-        const form = document.querySelector('.form__inner.widget__form');
-        chat.appendChild(form);
-        form.style.display = 'block';
-
-        scroll();
-        endChat();
-    }
-
     // завершение чата
     function endChat() {
         const chat = document.querySelector('.chat');
@@ -713,9 +834,6 @@ export default () => {
             const chatOperatorWrappers = document.querySelectorAll('.chat__operator-wrapper, .chat__operator-btns, .chat__user, .chat__operator-close');
             chatOperatorWrappers[0].remove();
             chatOperatorWrappers.forEach(el => el.remove());
-
-            const form = document.querySelector('.form__inner.widget__form');
-            form.style.display = 'none';
     
             const widget = document.querySelector('.widget');
             widget.style.display = 'none';
