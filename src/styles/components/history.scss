@@ -1,0 +1,61 @@
+.history {
+    position: fixed;
+    width: 70vw;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: $white-color;
+    border-radius: 10px;
+    padding: 50px 20px 20px;
+    text-shadow: none;
+    display: none;
+}
+
+.history.active {
+    display: block;
+}
+
+.history__date {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.history__close {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+
+    &:before,
+    &:after {
+        content: "";
+        height: 2px;
+        border-radius: 10px;
+        width: 100%;
+        position: absolute;
+        top: 15px;
+        transform: rotate(45deg);
+        background: $title-color;
+    }
+
+    &:after {
+        transform: rotate(-45deg);
+    }
+}
+
+.history__wrapper {
+    height: 60vh;
+    overflow: auto;
+
+    p {
+        &:not(:last-of-type) {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+.history__user {
+    text-align: right;
+}

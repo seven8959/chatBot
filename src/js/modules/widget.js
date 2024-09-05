@@ -43,6 +43,10 @@ export default () => {
             else if (target.classList.contains('large-font')) {
                 draggable.classList.toggle('large__font')
             }
+
+            else if (target.classList.contains('history-btn')) {
+                history.classList.add('active')
+            }
         })
     }
     useSettingsWidget();
@@ -133,14 +137,14 @@ export default () => {
     // флоу чата
     const chatStart = {
         start: {
-            question: 'Доброго дня, Легітимний оператор на зв”язку. Вкажіть ваше ім`я?',
+            question: 'Доброго дня, Легітимний оператор на зв”язку. Вкажіть ваше ім`я.',
             type: 'input',
             next: 'greetUser'
         },
         greetUser: {
             messages: [
                 { type: 'statement', text: 'Дякую, {value}, радий з вами познайомитись' },
-                { type: 'statement', text: 'Далі повідомте нам вашу стать?' }
+                { type: 'statement', text: 'Далі повідомте нам вашу стать.' }
             ],
             type: 'choice',
             choices: [
@@ -193,14 +197,14 @@ export default () => {
             ],
             type: 'choice',
             choices: [
-                { text: 'Потенція', value: 'potention' },
-                { text: 'Гіпертонія', value: 'hypertension' },
-                { text: 'Теща', value: 'wife-mother' }
+                { text: 'Потенція', value: 'potention' }, 
+                { text: 'Гіпертонія', value: 'hypertension' }, 
+                { text: 'Теща', value: 'wifeMother' } 
             ],
             next: {
-                potention: 'stepPotention',
-                hypertension: 'stepHypertension',
-                wifeMother: 'stepWifeMother'
+                potention: 'stepPotention', // флоу потенция
+                hypertension: 'stepHypertension', // флоу гипертония
+                wifeMother: 'stepWifeMother' // флоу теща
             }
         },
         stepHypertension: {
@@ -263,8 +267,8 @@ export default () => {
                 { text: 'Ні', value: 'no' }
             ],
             next: {
-                yes: 'addAudio',
-                no: 'endChatOperator'
+                yes: 'addAudio', // если да, запуск аудио
+                no: 'endChatOperator' // если нет, завершение чата
             }
         },
 
@@ -303,8 +307,8 @@ export default () => {
                 { text: 'Ні', value: 'no' }
             ],
             next: {
-                yes: 'askPhone',
-                no: 'sayBay'
+                yes: 'askPhone', // если да, просим телефон 
+                no: 'sayBay' // если нет, закрываем чат 
             }
         },
 
@@ -387,7 +391,7 @@ export default () => {
         },
 
         askHowLongProblems: {
-            question: 'Як давно почалися ваші проблеми',
+            question: 'Як давно почалися ваші проблеми?',
             type: 'input',
             next: 'askSupport'
         },
@@ -428,6 +432,83 @@ export default () => {
         },
 
         // Флоу теща
+        stepWifeMother: {
+            question: 'Як давно ви одружені?',
+            type: 'input',
+            next: 'askRelationship'
+        },
+
+        askRelationship: {
+            question: 'Як би ви охарактеризували ваші стосунки з тещею?',
+            type: 'input',
+            next: 'askAlcohol'
+        },
+        
+        askAlcohol: {
+            question: 'Чи п`є ваша теща алкоголь?',
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Ні', value: 'no' },
+                { text: 'Трохи', value: 'little' },
+                { text: 'Тільки вино', value: 'vine' }
+            ],
+            next: {
+                yes: 'askDrink', // теща пьет
+                no: 'askNoDrink', // теща не пьет
+                little: 'addOfferWifeMother', // пьет мало 
+                vine: 'askDrinkVine', // пьет вино
+            }
+        }, 
+
+        // теща пьет
+        askDrink: { 
+            question: 'Чи розглядали ви варіант порозумітися через пляшку?',
+            type: 'input',
+            next: 'askOfferADrink'
+        }, 
+
+        askOfferADrink: {
+            question: 'Тоді запропонуйте їй наступне, підійдіть до неї, запропонуйте їй випити (заздалегідь перепрошую, не знаю як її звуть)',
+            type: 'text',
+            next: 'recordAudio',
+        },
+
+        recordAudio: {
+            type: 'audio',
+            audioFile: 'soromno.mp3',
+            next: 'addOfferWifeMother'
+        }, 
+
+        addOfferWifeMother: {
+            messages: [
+                { type: 'statement', text: `Пропонуємо вам спробувати наш експериментальний препарат "<b>МАМА з екстрактом мати-й-мачухи</b>" за ціною 50$ за флакон. Спочатку пропонуємо вам взяти одну баночку на пробу, згодні?` },
+            ],
+            type: 'choice',
+            choices: [
+                { text: 'Так', value: 'yes' },
+                { text: 'Ні', value: 'no' }
+            ],
+            next: {
+                yes: 'askData',
+                no: 'askData',
+            }
+        },
+
+        // теща не пьет 
+        askNoDrink: { 
+            question: 'Підкажіть, чи курить ваша теща? може підійти до неї через слухавку світу?',
+            type: 'input',
+            next: 'addOfferWifeMother'
+        }, 
+
+        // пьет вино
+        askDrinkVine: { 
+            question: 'Чи пробували ви скористатися коктейлем горілка+вино для налагодження побутових відносин?',
+            type: 'input',
+            next: 'addOfferWifeMother'
+        } 
+        
     };
     
     let currentStep = 'start';
@@ -436,11 +517,34 @@ export default () => {
     function formatMessage(template) {
         return template.replace(/{(\w+)}/g, (_, key) => userData[key] || '');
     }
+
+    // История чата
+    let chatHistory = [];
+    const history = document.querySelector('.history');
+    const historyClose = document.querySelector('.history__close ');
+    const historyWrapper = document.querySelector('.history__wrapper');
+
+    historyClose.addEventListener('click', function() {
+        history.classList.remove('active')
+    })
+
+    function getHistory(user, message, type) {
+        chatHistory.push({
+            user: user,  // 'operator' или 'user'
+            message: message,
+            type: type   
+        });
+
+        const historyItem = document.createElement('p');
+        historyItem.classList.add(user === 'operator' ? 'history__operator' : 'history__user');
+        historyItem.textContent = message;
+        historyWrapper.appendChild(historyItem);
+    }
     
     // рендер вопросов
     function renderQuestion(step) {
         const currentData = chatStart[step];     
-    
+
         if (currentData.type === 'audio') { // если тайп аудио, рендер блока аудио
             renderAudioRecording(() => {
                 createAudioPlayer(); 
@@ -460,6 +564,8 @@ export default () => {
                     document.querySelector('.user__message').value = '';
                     document.querySelector('.user__message').focus();
                     inputEnabled = true; // Включаем ввод данных
+                } else if (currentData.type === 'text') { 
+                    goToNextStep(currentData.next); // Переход на следующий шаг если тайп text
                 }
             });
         }
@@ -485,7 +591,6 @@ export default () => {
     // рендер блока аудио
     function renderAudioRecording(callback) {
         const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
-        console.log(audioData);
         
         const audioElement = document.createElement('audio');
         audioElement.src = `img/${audioData}`;
@@ -545,9 +650,11 @@ export default () => {
         }, 4000);
     }
     
+
     // слушатель поля инпут
     function handleUserInput() {
         const input = document.querySelector('.user__message').value.trim();
+        getHistory('user', input, 'input'); // получаем данные в историю из поля ввода
         if (inputEnabled && input) { // Проверяем, включен ли ввод данных
             if (currentStep === 'start') {
                 userData.value = input; // Сохраняем имя пользователя
@@ -560,9 +667,10 @@ export default () => {
             goToNextStep(chatStart[currentStep].next);
         }
     }
-    
+
     // слушатель блоков с кнопками 
     function handleChoice(choice) {
+        getHistory('user', choice.text, 'button'); // получаем данные в историю из кнопок
         const currentData = chatStart[currentStep];
         createUserMessage(choice.text);
         document.querySelector('.chat__operator-btns').remove(); // Удаляем блок кнопок после выбора
@@ -592,7 +700,7 @@ export default () => {
     function goToNextStep(nextStep) {
         const inputField = document.querySelector('.user__message');
         currentStep = nextStep;
-    
+
         if (nextStep === 'end') {
             endChat(); // Завершаем чат сразу
         } else {
@@ -610,6 +718,10 @@ export default () => {
     
     // создание сообщений оператора
     function createOperatorMessage(messages, callback = null) {
+        messages.forEach(message => {
+            getHistory('operator', message.text, 'text'); // получаем данные в историю из текста оператора
+        });
+        
         let messageContainer;
     
         const operatorWrapper = document.createElement('div');
@@ -761,11 +873,9 @@ export default () => {
     // создание аудиоплеераs
     function createAudioPlayer() {
         const audioData = chatStart[currentStep].audioFile; // получаем название файла из объекта
-        console.log('создание плеера', audioData)
         const audioElement = document.createElement('audio');
         audioElement.src = `img/${audioData}`;
         const audio = new Audio(audioElement.src);
-        console.log(audio)
         const playButton = document.querySelector('.record__btn');
         const progressDisplay = document.querySelector('.record__progres');
         const totalTimeDisplay = document.querySelector('.record__time');
