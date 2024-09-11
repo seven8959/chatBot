@@ -718,7 +718,6 @@ export default () => {
 
     // переход к следующему шагу
     function goToNextStep(nextStep) {
-        const inputField = document.querySelector('.user__message');
         currentStep = nextStep;
 
         if (nextStep === 'end') {
@@ -784,12 +783,12 @@ export default () => {
     
         scroll();
     
-        const inputField = document.querySelector('.user__message');
         inputField.disabled = true; // блокировка ввода
     
         // анимация печати и переключение на следующий шаг
         simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
             if (messages.length > 1) {
+                inputField.disabled = true
                 doneMessage.removeChild(timeSpan);
     
                 const typingMessageSecond = document.createElement('p');
