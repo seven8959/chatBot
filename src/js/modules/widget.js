@@ -3,21 +3,28 @@ export default () => {
     const showWidgetBtns = document.querySelectorAll('.widget-show');
     const closeWidgetMenu = document.querySelector('.widget__menu-close');
     const operatoConnect = document.querySelector('.chat__operator-connect');
+    let activeChat = false;
 
     showWidgetBtns.forEach(el => {
         el.addEventListener('click', function() {
-            draggable.style.display = `block`;
-
-            // подключение оператора
-            setTimeout(() => {
-                operatoConnect.style.display = 'block';
-                scroll();
+            if (!activeChat) {
+                draggable.style.display = 'block';
+                activeChat = true;
+                
+                // подключение оператора
                 setTimeout(() => {
-                    startChat();
-                }, 2000);
-            }, 3000);
-        })
-    })
+                    operatoConnect.style.display = 'block';
+                    scroll();
+                    setTimeout(() => {
+                        startChat();
+                    }, 2000);
+                }, 3000);
+            } else if (draggable.classList.contains('minimize')) {
+                draggable.classList.remove('minimize');
+                centerWindow();
+            }
+        });
+    });
     
     // кнопка настройки чата
     const settingsBtn = document.querySelector('.widget__settings');
@@ -137,7 +144,7 @@ export default () => {
     // флоу чата
     const chatStart = {
         start: {
-            question: 'Доброго дня, Легітимний оператор на зв”язку. Вкажіть ваше ім`я.',
+            question: 'Доброго дня, Легітимний оператор на зв`язку. Вкажіть ваше ім`я.',
             type: 'input',
             next: 'greetUser'
         },
@@ -540,10 +547,13 @@ export default () => {
         historyItem.textContent = message;
         historyWrapper.appendChild(historyItem);
     }
+
+    // let inputEnabled = false; // Флаг для контроля ввода
     
     // рендер вопросов
     function renderQuestion(step) {
         const currentData = chatStart[step];     
+        inputField.disabled = true;
 
         if (currentData.type === 'audio') { // если тайп аудио, рендер блока аудио
             renderAudioRecording(() => {
@@ -563,7 +573,7 @@ export default () => {
                 } else if (currentData.type === 'input') {
                     document.querySelector('.user__message').value = '';
                     document.querySelector('.user__message').focus();
-                    inputEnabled = true; // Включаем ввод данных
+                    inputField.disabled = false; // Включаем ввод данных
                 } else if (currentData.type === 'text') { 
                     goToNextStep(currentData.next); // Переход на следующий шаг если тайп text
                 }
@@ -650,20 +660,30 @@ export default () => {
         }, 4000);
     }
     
+    const inputField = document.querySelector('.user__message');
 
     // слушатель поля инпут
     function handleUserInput() {
-        const input = document.querySelector('.user__message').value.trim();
+        const input = inputField.value.trim();
+
+        // if (!inputEnabled) {
+        //     inputField.disabled = true;
+        //     inputField.value = '';
+        //     return;
+        // } else {
+        //     inputField.disabled = false;
+        // }
+
         getHistory('user', input, 'input'); // получаем данные в историю из поля ввода
-        if (inputEnabled && input) { // Проверяем, включен ли ввод данных
+        if (input) { // Проверяем, включен ли ввод данных
             if (currentStep === 'start') {
                 userData.value = input; // Сохраняем имя пользователя
             } else if (chatStart[currentStep].type === 'input') {
                 userData.age = input; // Сохраняем введенный возраст
             }
             createUserMessage(input); // Отображаем сообщение пользователя
-            document.querySelector('.user__message').value = ''; // Очищаем поле ввода
-            inputEnabled = false; // Выключаем ввод данных до следующего сообщения
+            inputField.value = ''; // Очищаем поле ввода
+            inputField.disabled = true; // Выключаем ввод данных до следующего сообщения
             goToNextStep(chatStart[currentStep].next);
         }
     }
@@ -713,8 +733,6 @@ export default () => {
             inputField.disabled = true;
         }
     }
-
-    let inputEnabled = false; // Флаг для контроля ввода
     
     // создание сообщений оператора
     function createOperatorMessage(messages, callback = null) {
@@ -817,10 +835,10 @@ export default () => {
             doneElement.style.display = 'block';
             scroll();
     
-            inputEnabled = true; // включаем ввод после завершения анимации
+            inputField.disabled = false; // включаем ввод после завершения анимации
     
             if (callback) callback();
-        }, typingDuration * 10); // скорость печати
+        }, typingDuration * 100); // скорость печати
     }
     
     // создание сообщений пользователя
@@ -864,6 +882,7 @@ export default () => {
             button.textContent = choice.text;
             button.dataset.gender = choice.value;
             buttonWrapper.appendChild(button);
+            inputField.disabled = true;
         });
     
         document.querySelector('.chat').appendChild(buttonWrapper);
@@ -952,9 +971,8 @@ export default () => {
             currentStep = 'start';
             Object.keys(userData).forEach(key => delete userData[key]);
 
-            inputEnabled = false;
-            const inputField = document.querySelector('.user__message');
             inputField.disabled = true;
+            activeChat = false;
         });
     }
     
