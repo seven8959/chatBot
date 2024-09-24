@@ -841,12 +841,22 @@ export default () => {
     }
     
     // создание сообщений пользователя
+    let userImageSrc = 'img/user.png' // сохранение пути изображения в переменную
+
+    // обновление пути изображения
+    function updateUserImages(imageSrc) {
+        const userImages = document.querySelectorAll('.user__img');
+        userImages.forEach(img => {
+            img.src = imageSrc;
+        });
+    }
+
     function createUserMessage(text) {
         const userWrapper = document.createElement('div');
         userWrapper.classList.add('chat__user');
     
         const img = document.createElement('img');
-        img.src = 'img/user.png';
+        img.src = userImageSrc;
         img.classList.add('user__img');
         img.alt = '';
     
@@ -979,4 +989,21 @@ export default () => {
     function startChat() {
         renderQuestion(currentStep);
     }
+
+    // замена аватра юзера
+    const inputFile = document.querySelector('.input__file');
+    inputFile.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                userImageSrc = e.target.result;
+                updateUserImages(userImageSrc);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
 }
