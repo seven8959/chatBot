@@ -9,6 +9,7 @@
     font-family: $main-font;
     text-shadow: none;
     display: none;
+    z-index: 5;
 }
 
 .widget__top {
@@ -27,6 +28,10 @@
     padding: 5px 0;
     top: calc(50% - 7px);
     right: 15px;
+}
+
+.drag__icon {
+    display: none;
 }
 
 .minimize__line {
@@ -130,6 +135,7 @@
     cursor: pointer;
     text-align: center;
     width: 117px;
+    align-content: center;
     
     transition: background .2s;
 
@@ -303,7 +309,16 @@
     background: #F8F5F5;
     border-top: 1px solid #ccc;
     display: flex;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    transition: .3s;
+}
+
+.widget__user-msg.active {
     padding: 7px 10px 7px 16px;
+    height: inherit;
+    overflow: visible;
 }
 
 .user__message {
@@ -659,6 +674,25 @@
             padding-top: 14px;
             padding-bottom: 14px;
         }
+    }
+}
+
+@include rm(1024) {
+    .widget {
+        transform: none;
+        left: auto;
+        top: auto;
+        right: 40px;
+        bottom: 40px;
+    }
+
+    .drag__icon {
+        display: block;
+        position: absolute;
+        right: 40px;
+        top: calc(50% - 10px);
+        width: 17px;
+        height: 20px;
     }
 }
 

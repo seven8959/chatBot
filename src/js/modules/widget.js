@@ -3,6 +3,7 @@ export default () => {
     const showWidgetBtns = document.querySelectorAll('.widget-show');
     const closeWidgetMenu = document.querySelector('.widget__menu-close');
     const operatoConnect = document.querySelector('.chat__operator-connect');
+    const chat = document.querySelector('.chat');
     let activeChat = false;
 
     showWidgetBtns.forEach(el => {
@@ -21,7 +22,7 @@ export default () => {
                 }, 3000);
             } else if (draggable.classList.contains('minimize')) {
                 draggable.classList.remove('minimize');
-                centerWindow();
+                checkWindowSize();
             }
         });
     });
@@ -36,6 +37,9 @@ export default () => {
     closeWidgetMenu.addEventListener('click', function() {
         widgetMenu.classList.remove('active');
     })
+    chat.addEventListener('click', function() {
+        widgetMenu.classList.remove('active');
+    })
 
 
     // настройки чата
@@ -44,7 +48,8 @@ export default () => {
             let target = e.target;
 
             if (target.classList.contains('dark-mode')) {
-                draggable.classList.toggle('dark__mode')
+                draggable.classList.toggle('dark__mode');
+                history.classList.toggle('dark__mode');
             } 
 
             else if (target.classList.contains('large-font')) {
@@ -52,7 +57,7 @@ export default () => {
             }
 
             else if (target.classList.contains('history-btn')) {
-                history.classList.add('active')
+                history.classList.toggle('active')
             }
         })
     }
@@ -70,7 +75,16 @@ export default () => {
         draggable.style.left = `50%`;
         draggable.style.top = `50%`;
         draggable.style.bottom = `auto`;
+        draggable.style.right = `auto`;
         draggable.style.transform = `translate(-50%, -50%)`;
+    }
+
+    function setDefaultPosition() {
+        draggable.style.transform = 'none';
+        draggable.style.left = 'auto';
+        draggable.style.top = 'auto';
+        draggable.style.right = '40px';
+        draggable.style.bottom = '40px';
     }
 
     function moving() {
@@ -82,6 +96,8 @@ export default () => {
                 const newY = e.clientY - offsetY;
                 draggable.style.left = `${newX}px`;
                 draggable.style.top = `${newY}px`;
+                draggable.style.right = `auto`;
+                draggable.style.bottom = `auto`;
             }
         });
 
@@ -104,8 +120,10 @@ export default () => {
     });
 
     function checkWindowSize() {
-        if (window.innerWidth < 1250) {
+        if (window.innerWidth < 1024) {
             centerWindow();
+        } else {
+            setDefaultPosition();
         }
     }
 
@@ -118,20 +136,25 @@ export default () => {
 
     minimizeBtn.addEventListener('click', function () {
         if (draggable.classList.toggle('minimize')) {
-            draggable.style.left = '0';
+            draggable.style.right = '0';
             draggable.style.top = 'auto';
+            draggable.style.left = 'auto';
             draggable.style.bottom = '0';
             draggable.style.transform = 'none';
             isDraggable = false;
         } else {
-            centerWindow();
+            checkWindowSize();
+            showWidgetBtns.forEach(el => {
+                el.addEventListener('click', function() {
+                    checkWindowSize();
+                })
+            })
         }
     });
 
     // chatbot
     // скроллл чата при появлении новых сообщений
     function scroll() {
-        const chat = document.querySelector('.chat');
         chat.scroll({
             top: chat.scrollHeight,
             behavior: 'smooth'
@@ -552,8 +575,8 @@ export default () => {
     
     // рендер вопросов
     function renderQuestion(step) {
-        const currentData = chatStart[step];     
-        inputField.disabled = true;
+        const currentData = chatStart[step];
+        showInputField(true, 'hide')  
 
         if (currentData.type === 'audio') { // если тайп аудио, рендер блока аудио
             renderAudioRecording(() => {
@@ -572,8 +595,7 @@ export default () => {
                     createChoiceButtons(currentData.choices);
                 } else if (currentData.type === 'input') {
                     document.querySelector('.user__message').value = '';
-                    document.querySelector('.user__message').focus();
-                    inputField.disabled = false; // Включаем ввод данных
+                    showInputField(false, 'active');
                 } else if (currentData.type === 'text') { 
                     goToNextStep(currentData.next); // Переход на следующий шаг если тайп text
                 }
@@ -649,7 +671,7 @@ export default () => {
         operator.appendChild(img);
         operator.appendChild(messageContainer);
         operatorWrapper.appendChild(operator);
-        document.querySelector('.chat').appendChild(operatorWrapper);
+        chat.appendChild(operatorWrapper);
     
         scroll();
     
@@ -659,20 +681,27 @@ export default () => {
             callback();
         }, 4000);
     }
-    
-    const inputField = document.querySelector('.user__message');
 
+    // Скрытие поля инпут, если оператор печатет сообщение. 
+    const inputField = document.querySelector('.user__message');
+    const inputShow = document.querySelector('.widget__user-msg');
+
+    function showInputField(disabled, activeClass) {
+        if (inputField && inputShow) {
+            inputField.disabled = disabled;
+
+            if (activeClass === 'active') {
+                inputShow.classList.add(activeClass);
+            } 
+             else if (activeClass === 'hide') {
+                inputShow.classList.remove('active');
+            }
+        }
+    }
+    
     // слушатель поля инпут
     function handleUserInput() {
         const input = inputField.value.trim();
-
-        // if (!inputEnabled) {
-        //     inputField.disabled = true;
-        //     inputField.value = '';
-        //     return;
-        // } else {
-        //     inputField.disabled = false;
-        // }
 
         getHistory('user', input, 'input'); // получаем данные в историю из поля ввода
         if (input) { // Проверяем, включен ли ввод данных
@@ -683,7 +712,7 @@ export default () => {
             }
             createUserMessage(input); // Отображаем сообщение пользователя
             inputField.value = ''; // Очищаем поле ввода
-            inputField.disabled = true; // Выключаем ввод данных до следующего сообщения
+            showInputField(true, 'hide');
             goToNextStep(chatStart[currentStep].next);
         }
     }
@@ -706,7 +735,7 @@ export default () => {
     });
 
     // выбор пола пользоватея и отображение выбранного значения в следующем сообщении
-    document.querySelector('.chat').addEventListener('click', (event) => {
+    chat.addEventListener('click', (event) => {
         if (event.target.classList.contains('chat__operator-btn')) {
             const choice = {
                 text: event.target.textContent,
@@ -727,9 +756,9 @@ export default () => {
         }
     
         if (chatStart[currentStep].type === 'input') {
-            inputField.disabled = true; // блокируем ввод до конца печати сообщений
+            showInputField(true, 'hide');
         } else {
-            inputField.disabled = true;
+            showInputField(true, 'hide');
         }
     }
     
@@ -758,7 +787,7 @@ export default () => {
         operator.appendChild(img);
         operator.appendChild(messageContainer);
         operatorWrapper.appendChild(operator);
-        document.querySelector('.chat').appendChild(operatorWrapper);
+        chat.appendChild(operatorWrapper);
     
         const typingMessage = document.createElement('p');
         typingMessage.classList.add('chat__operator-writes');
@@ -783,12 +812,12 @@ export default () => {
     
         scroll();
     
-        inputField.disabled = true; // блокировка ввода
+        showInputField(true, 'hide');
     
         // анимация печати и переключение на следующий шаг
         simulateTypingEffect(typingMessage, doneMessage, messageText.textContent.length, () => {
             if (messages.length > 1) {
-                inputField.disabled = true
+                showInputField(true, 'hide');
                 doneMessage.removeChild(timeSpan);
     
                 const typingMessageSecond = document.createElement('p');
@@ -816,11 +845,11 @@ export default () => {
                 scroll();
     
                 simulateTypingEffect(typingMessageSecond, doneMessageSecond, messageTextSecond.textContent.length, () => {
-                    inputField.disabled = false; // включение ввода после печати всех сообщений
+                    showInputField(false, 'active');
                     if (callback) callback();
                 });
             } else {
-                inputField.disabled = false; // включение ввода после одного сообщения
+                showInputField(false, 'active');
                 if (callback) callback();
             }
         });
@@ -834,7 +863,7 @@ export default () => {
             doneElement.style.display = 'block';
             scroll();
     
-            inputField.disabled = false; // включаем ввод после завершения анимации
+            showInputField(false, 'active');
     
             if (callback) callback();
         }, typingDuration * 100); // скорость печати
@@ -851,6 +880,7 @@ export default () => {
         });
     }
 
+    // создание сообщения юзера
     function createUserMessage(text) {
         const userWrapper = document.createElement('div');
         userWrapper.classList.add('chat__user');
@@ -876,7 +906,7 @@ export default () => {
         userWrapper.appendChild(img);
         userWrapper.appendChild(messageContainer);
     
-        document.querySelector('.chat').appendChild(userWrapper);
+        chat.appendChild(userWrapper);
         scroll();
     }
     
@@ -891,10 +921,10 @@ export default () => {
             button.textContent = choice.text;
             button.dataset.gender = choice.value;
             buttonWrapper.appendChild(button);
-            inputField.disabled = true;
+            showInputField(true, 'hide');
         });
     
-        document.querySelector('.chat').appendChild(buttonWrapper);
+        chat.appendChild(buttonWrapper);
         scroll();
     }
 
@@ -951,7 +981,6 @@ export default () => {
 
     // завершение чата
     function endChat() {
-        const chat = document.querySelector('.chat');
         const chatOperatorClose = document.createElement('div');
         const operatorExitMsg = document.createElement('p');
         chatOperatorClose.classList.add('chat__operator-close');
@@ -980,7 +1009,7 @@ export default () => {
             currentStep = 'start';
             Object.keys(userData).forEach(key => delete userData[key]);
 
-            inputField.disabled = true;
+            showInputField(true, 'hide');
             activeChat = false;
         });
     }

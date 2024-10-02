@@ -147,14 +147,13 @@
     }
 
     .slider__header {
-        margin-bottom: 35px;
-        margin-top: -34px;
-        margin: -35px 0 38px 49px;
+        margin: -35px auto 38px;
+        text-align: center;
     }
 
     .slider__text {
         font-size: 24px;
-        margin-left: 100px;
+        text-align: center;
     }
 
     .arrow {

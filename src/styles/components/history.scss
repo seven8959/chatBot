@@ -9,6 +9,7 @@
     padding: 50px 20px 20px;
     text-shadow: none;
     display: none;
+    background: radial-gradient(circle at 50% -20.71%, #ffe6cd 0, #ffe7ca 6.25%, #ffe9c9 12.5%, #ffebc8 18.75%, #fbecc8 25%, #f6eec8 31.25%, #f1efc9 37.5%, #ebf1cb 43.75%, #e6f2cd 50%, #e1f3d0 56.25%, #dbf4d3 62.5%, #d6f5d7 68.75%, #d1f6db 75%, #ccf7df 81.25%, #c8f8e4 87.5%, #c4f8e9 93.75%, #c1f8ee 100%);
 }
 
 .history.active {
@@ -50,12 +51,53 @@
     overflow: auto;
 
     p {
+        padding: 10px;
+        width: 40%;
+        box-shadow: 0 4px 4px rgba($color: #000000, $alpha: .25);
+
         &:not(:last-of-type) {
             margin-bottom: 10px;
         }
     }
 }
 
+.history__operator {
+    background: #fff;
+    border-radius: 5px;
+    line-height: 1.5;
+}
+
 .history__user {
     text-align: right;
+    margin-left: auto;
+    background: #b5ddff;
+}
+
+.dark__mode.history {
+    background: radial-gradient(circle at 104.17% 4.55%, #6c3f60 0, #61355d 16.67%, #542a5b 33.33%, #441f59 50%, #301657 66.67%, #121056 83.33%, #000d56 100%);;
+
+    .history__close {
+        &:before,
+        &:after {
+            background: $white-color;
+        }
+    }
+
+    .history__date {
+        color: $white-color;
+    }
+
+    .history__wrapper {
+        p {
+            color: $white-color;
+        }
+    }
+
+    .history__operator {
+        background: #381a34;
+    }
+
+    .history__user {
+        background: #191f37;
+    }
 }
